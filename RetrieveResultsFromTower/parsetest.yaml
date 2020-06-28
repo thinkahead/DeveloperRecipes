@@ -80,5 +80,5 @@
       no_log: true
 
     - name: show output parameters from the tower job
-      debug: msg="{{ item.inventory_hostname }} {{ item.ansible_host }} {{ item.pwquality_values }}"
+      debug: msg="{{ item.inventory_hostname }} {{ item.ansible_host }} {{ item.pwquality_values }} {{ item.needs_fix }}"
       loop: "{{ values }}"
