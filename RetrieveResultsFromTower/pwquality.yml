@@ -1,0 +1,31 @@
+- hosts: all
+  gather_facts: false
+  #become: true
+  vars:
+     fix_mode: false # Set this to true in job template extra vars
+     # Keep this commented if you want to use your host/group/inventory variables
+     # This will have higher precedence that host/group/inventory variables but less than extra vars
+     # required_pass_minlen: 16
+  tasks:
+    - name: Reading Configuration Settings
+      shell: cat /etc/security/pwquality.conf | grep "=" | grep -v "^#";true
+      register: pwquality_results
+
+    - set_fact:
+        pwquality_values: "{{ pwquality_values | default({}) | combine( dict([ item.partition('=')[::2]|map('trim') ]) ) }}"
+      with_items: "{{ pwquality_results.stdout_lines }}"
+      when: item.split('=')|length > 1
+      no_log: true
+
+    - name: Set fact for the dictionary that contains all the variables to be parsed
+      set_fact:
+        tower_response: '{{ tower_response | default({}) | combine( {"required_pass_minlen":(required_pass_minlen if required_pass_minlen is defined else ""),"inventory_hostname":inventory_hostname,"ansible_host":ansible_host,"pwquality_values":pwquality_values,"needs_fix":((pwquality_values.minlen|int)<(required_pass_minlen|int) and fix_mode|bool) if required_pass_minlen is defined else False} ) }}'
+      no_log: true
+
+    # Print as loop item
+    - name: Tower Response
+      set_fact:
+        dummy: value # Just to make some task without output
+      with_items:
+        - "{{ tower_response | to_json }}"
+        #- tower_response=>{{ tower_response | to_json }}<=

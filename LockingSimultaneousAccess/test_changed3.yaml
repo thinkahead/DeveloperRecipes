@@ -1,0 +1,20 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    lock_file: "/tmp/ansible-playbook-{{ ansible_host }}.lock"
+  tasks:
+    - name: create lock_file if not exists
+      shell: echo "$$" | tee "{{ lock_file }}.$$" && ln "{{ lock_file }}.$$" "{{ lock_file }}"
+      args:
+        warn: false
+      register: lockcode
+      ignore_errors: true
+      changed_when: "lockcode.rc|int==0"
+    - debug:
+        msg: "{{ lockcode.changed }}"
+    - name: delete lock_file.$$
+      shell: cat "{{ lock_file }}";rm "{{ lock_file }}.{{ lockcode.stdout }}"
+      args:
+        warn: false
+      ignore_errors: true

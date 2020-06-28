@@ -1,0 +1,71 @@
+- block:    
+    #- name: create lock dir if not exists
+    #  file:
+    #    path: "{{ wait_for_lock_dir }}"
+    #    state: directory
+    #  register: lockcode
+    - name: create lock dir if not exists
+      shell: mkdir "{{ wait_for_lock_dir }}";echo $?
+      args:
+        warn: false
+      register: lockcode
+      ignore_errors: true
+      throttle: 1
+    - name: Get info on wait_for_lock_dir
+      stat:
+        path: "{{ wait_for_lock_dir }}"
+      register: wait_for_lock_dir_cfg
+    - block:
+        - name: Module to Get Epoch
+          get_epoch:
+          register: ansible_date_time_epoch
+        - name: Debug date comparison
+          debug:
+            msg: "{{ uniqueid }} wait_for timeout={{ (state_timeout - (ansible_date_time_epoch.epoch|float - wait_for_lock_dir_cfg.stat.mtime))|int }}"
+        - name: wait for lock file to be absent
+          wait_for:
+            path: "{{ wait_for_lock_dir }}"
+            state: absent
+            timeout: "{{ (state_timeout - (ansible_date_time_epoch.epoch|float - wait_for_lock_dir_cfg.stat.mtime))|int }}" # Change this to larger value the time required for the role to execute
+          ignore_errors: true
+          register: waitfor
+          when:
+            - (ansible_date_time_epoch.epoch|float - wait_for_lock_dir_cfg.stat.mtime) < state_timeout
+            - (ansible_date_time_epoch.epoch|float - wait_for_lock_dir_cfg.stat.mtime) > 0
+        #- name: debug waitfor
+        #  debug:
+        #    msg: "{{ waitfor }}"
+        - block:
+            - name: remove lock file wait_for_lock_dir
+              file:
+                path: "{{ wait_for_lock_dir }}"
+                state: absent
+            #- name: Sleep for 2 seconds for all waiting processes to make the file absent - May need to increase this
+            #  wait_for:
+            #    delay: 2
+            #    timeout: 0
+          when: (waitfor.skipped is defined and waitfor.skipped) or (waitfor.state is defined and waitfor.state!="absent") # means file was created state_timeout seconds earlier or (lockfile is still present and < state_timeout seconds earlier)
+        - fail:
+            msg: Create loop on block and run again, rescue failure
+      #when: lockcode.rc|int==1
+      when: lockcode.stdout|int==1
+      #when: not lockcode.changed # Aleady exists
+    - name: create lock dir if not exists, if it got deleted by other waiting workers
+      file:
+        path: "{{ wait_for_lock_dir }}"
+        state: directory
+      register: check_if_changed
+    - name: Check if the wait_for_lock_dir needed to be recreated
+      debug:
+        msg: "CHECK This means some worker deleted the lock file: {{ check_if_changed.changed }}"
+      when: check_if_changed.changed
+    - assert:
+        that:
+          - not check_if_changed.changed
+  rescue:
+    - debug:
+        msg: "Running again"
+    - include_tasks: wait_for_lock.yaml
+  tags:
+    - always
+

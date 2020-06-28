@@ -1,0 +1,37 @@
+- hosts: localhost
+  gather_facts: false
+  become: true
+  vars:
+      stdout_lines: [
+        "minlen = 18",
+        "dcredit = -1",
+        "ucredit = -2",
+        "ocredit = -2",
+        "lcredit = -2",
+        "difok = 3"
+        ]
+  tasks:
+    - set_fact:
+        pwquality_values: "{{ pwquality_values | default({}) | combine( dict([ item.partition('=')[::2]|map('trim') ]) ) }}"
+      with_items: "{{ stdout_lines }}"
+      when: item.split('=')|length > 1
+      no_log: true
+
+    - name: Set fact for the dictionary that contains all the variables to be parsed
+      set_fact:
+        tower_response: '{{ tower_response | default({}) | combine( {"inventory_hostname":inventory_hostname,"ansible_host":ansible_host,"pwquality_values":pwquality_values} ) }}'
+      no_log: false
+
+    # Print as task title
+    # Not suitable for multiple hosts, because task title is common for all hosts
+    #- name: "tower_response=>{{ tower_response | to_json }}<="
+    #  debug:
+    #    msg:
+    #      - "inventory_hostname={{ inventory_hostname }} ansible_hostname={{ ansible_hostname }} ansible_host={{ ansible_host }}"
+
+    # Print as loop item
+    - name: Operator Response
+      set_fact:
+        dummy: value # Just to make some task without output
+      with_items:
+        - "tower_response=>{{ tower_response | to_json }}<="

@@ -1,0 +1,13 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    lock_dir: "/tmp/ansible-playbook-{{ ansible_host }}.lock"
+  tasks:
+    - name: create lock_dir if not exists
+      file:
+        path: "{{ lock_dir }}"
+        state: directory
+      register: lockcode
+    - debug:
+        msg: "{{ lockcode.changed }}"

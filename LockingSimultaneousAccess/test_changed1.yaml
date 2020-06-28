@@ -1,0 +1,44 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    lock_dir: "/tmp/ansible-playbook-{{ ansible_host }}.lock"
+  tasks:
+    - name: create lock dir if not exists
+      command: mkdir "{{ lock_dir }}"
+      args:
+        warn: false
+      register: lockcode
+      ignore_errors: true
+      changed_when: "lockcode.rc|int==0"
+    - assert:
+        that: 
+          - lockcode.changed
+
+    - name: Module to Get Epoch
+      get_epoch:
+      register: ansible_date_time_epoch
+    - debug:
+        msg: "{{ ansible_date_time_epoch.epoch }}"
+
+    - name: Get info on lock_dir
+      stat:
+        path: "{{ lock_dir }}"
+      register: lock_dir_cfg
+
+    - debug:
+        msg: "{{ lock_dir_cfg.stat.mtime }}"
+
+    - name: Debug date comparison
+      debug:
+        msg: "wait_for timeout={{ (180 - (ansible_date_time_epoch.epoch|float - lock_dir_cfg.stat.mtime))|int }}"
+    - name: wait for lock file to be absent
+      wait_for:
+        path: "{{ lock_dir }}"
+        state: absent
+        timeout: "{{ (180 - (ansible_date_time_epoch.epoch|float - lock_dir_cfg.stat.mtime))|int }}"
+      ignore_errors: true
+      register: waitfor
+      when:
+        - (ansible_date_time_epoch.epoch|float - lock_dir_cfg.stat.mtime) < 180
+        - (ansible_date_time_epoch.epoch|float - lock_dir_cfg.stat.mtime) > 0

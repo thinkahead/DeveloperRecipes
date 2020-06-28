@@ -1,0 +1,64 @@
+- hosts: ec2
+#- hosts: localhost
+#  connection: local
+  gather_facts: no
+  strategy: free
+  #serial: 1
+  vars:
+    lock_dir: "/tmp/ansible-playbook-{{ ansible_host }}.lock"
+    state_timeout: 180 # seconds
+    uniqueid: 0
+  pre_tasks:
+    - name: wait for lock
+      include_tasks: wait_for_lock.yaml
+      vars:
+        wait_for_lock_dir: "{{ lock_dir }}"
+      tags:
+        - always
+  post_tasks:
+    - name: clear lock
+      file:
+        path: "{{ lock_dir }}"
+        state: absent
+      tags:
+        - always
+  tasks:
+    - name: Do something useful
+      debug:
+        msg: "Do something useful"
+    - name: CHECK Create test-lock dir. This should not fail
+      command: mkdir "test-lock"
+      args:
+        warn: false
+      tags:
+        - always
+    - name: CHECK Delete test-lock dir. This should not fail
+      shell: rmdir "test-lock"
+      args:
+        warn: false
+      tags:
+        - always
+
+        #- name: "Get info on {{ file_name }}"
+        #  stat:
+        #    path: "{{ file_name }}"
+        #  register: tmp_cfg
+        #- name: "Get info on {{ file_name }}"
+        #  stat:
+        #      path: "{{ file_name }}"
+        #  register: tmp_cfg2
+        #  when: tmp_cfg is not defined
+        #- debug:
+        #    msg: "{{ tmp_cfg2 }}"
+        #- set_fact:
+        #    tmp_cfg: "{{ tmp_cfg2 }}"
+        #  when: tmp_cfg2.skipped is not defined or tmp_cfg2.skipped != True
+        #- debug:
+        #    msg: "{{ tmp_cfg }}"
+        #- block:
+        #    - name: Shell to Get Epoch
+        #      shell: date +%s
+        #      register: ansible_date_time_epoch_shell
+        #    - debug:
+        #        msg: "{{ (ansible_date_time_epoch_shell.stdout|float - tmp_cfg.stat.mtime)/60 > 5 }}"
+        #  when: tmp_cfg.stat.exists
