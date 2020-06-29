@@ -1,0 +1,46 @@
+---
+- name: Creating socks tunnel without passphrase for single jumphost
+  block:
+    - name: Creating socks tunnel without passphrase for single jumphost
+      shell: ssh -i {{ jh_ssh_private_key }} -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -fN -D /tmp/mysocks{{ jh_socks_port }} -p {{ jh_ssh_port }} {{ jh_ssh_user }}@{{ jh_ip }};sleep 2
+  when:
+    - jh_socks_port is defined
+    - (jh_ssh_private_key|length > 0)
+
+- name: Setting of required socks_port variables for single jumphost
+  set_fact:
+    jh_socks_port: "{{ jh_socks_port when jh_socks_port is defined else jh1_socks_port }}"
+
+- name: Creating socks tunnel without passphrase for single jumphost
+  shell: ssh -i {{ jh1_ssh_private_key }} -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -fN -D /tmp/mysocks{{ jh_socks_port }} -p {{ jh1_ssh_port }} {{ jh1_ssh_user }}@{{ jh1_ip }};sleep 2
+  when:
+    - (jh2_ssh_private_key is undefined) or (jh2_ssh_private_key|length == 0)
+    - (jh1_ssh_private_key|length > 0)
+
+- name: Creating socks tunnel without passphrase for two jumphosts
+  shell: ssh -i {{ jh2_ssh_private_key }} -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oProxyCommand="ssh -i {{ jh1_ssh_private_key }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p {{ jh1_ssh_port }} {{ jh1_ssh_user }}@{{ jh1_ip }}" -fN -D /tmp/mysocks{{ jh_socks_port }} -p {{ jh2_ssh_port }} {{ jh2_ssh_user }}@{{ jh2_ip }};sleep 2
+  when:
+    - (jh3_ssh_private_key is undefined) or (jh3_ssh_private_key|length == 0)
+    - (jh2_ssh_private_key|length > 0)
+
+- name: Creating socks tunnel without passphrase for 3 jumphosts
+  shell: ssh -i {{ jh3_ssh_private_key }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i {{ jh2_ssh_private_key }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i {{ jh1_ssh_private_key }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p {{ jh1_ssh_port }} {{ jh1_ssh_user }}@{{ jh1_ip }}\" -p {{ jh2_ssh_port }} {{ jh2_ssh_user }}@{{ jh2_ip }}" -fN -D /tmp/mysocks{{ jh_socks_port }} -p {{ jh3_ssh_port }} {{ jh3_ssh_user }}@{{ jh3_ip }};sleep 2
+  when:
+    - (jh4_ssh_private_key is undefined) or (jh4_ssh_private_key|length == 0)
+    - (jh3_ssh_private_key|length > 0)
+
+- name: Creating socks tunnel without passphrase for 4 jumphosts
+  shell: ssh -i {{ jh4_ssh_private_key }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i {{ jh3_ssh_private_key }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i {{ jh2_ssh_private_key }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\"ssh -i {{ jh1_ssh_private_key }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p {{ jh1_ssh_port }} {{ jh1_ssh_user }}@{{ jh1_ip }}\\\" -p {{ jh2_ssh_port }} {{ jh2_ssh_user }}@{{ jh2_ip }}\" -p {{ jh3_ssh_port }} {{ jh3_ssh_user }}@{{ jh3_ip }}" -fN -D /tmp/mysocks{{ jh_socks_port }} -p {{ jh4_ssh_port }} {{ jh4_ssh_user }}@{{ jh4_ip }};sleep 2
+  when:
+    - (jh5_ssh_private_key is undefined) or (jh5_ssh_private_key|length == 0)
+    - (jh4_ssh_private_key|length > 0)
+
+- name: Creating socks tunnel without passphrase for 5 jumphosts
+  shell: ssh -i {{ jh5_ssh_private_key }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i {{ jh4_ssh_private_key }} -W {{ jh5_ip }}:{{ jh5_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i {{ jh3_ssh_private_key }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\"ssh -i {{ jh2_ssh_private_key }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\\\\\"ssh -i {{ jh1_ssh_private_key }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p {{ jh1_ssh_port }} {{ jh1_ssh_user }}@{{ jh1_ip }}\\\\\\\" -p {{ jh2_ssh_port }} {{ jh2_ssh_user }}@{{ jh2_ip }}\\\" -p {{ jh3_ssh_port }} {{ jh3_ssh_user }}@{{ jh3_ip }}\" -p {{ jh4_ssh_port }} {{ jh4_ssh_user }}@{{ jh4_ip }}" -fN -D /tmp/mysocks{{ jh_socks_port }} -p {{ jh5_ssh_port }} {{ jh5_ssh_user }}@{{ jh5_ip }};sleep 2
+  when:
+    - (jh6_ssh_private_key is undefined) or (jh6_ssh_private_key|length == 0)
+    - (jh5_ssh_private_key|length > 0)
+
+- debug: var=jh_socks_port
+
+#  no_log: true
