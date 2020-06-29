@@ -4,10 +4,6 @@
   gather_facts: false
   roles:
     - ansible-role-socks5-tunnel-nopassphrase
-  tasks:
-    - debug:
-        msg: "{{ ansible_psrp_proxy }}"
-    - shell: curl -sSf --socks5-hostname {{ ansible_psrp_proxy.split('/')[2] }} ifconfig.me
 
 - hosts: all
   gather_facts: no
@@ -36,3 +32,5 @@
 
     - name: get powershell version
       raw: $PSVersionTable
+
+# Tunnel will be killed at end of job because of ENABLE ISOLATED JOBS
