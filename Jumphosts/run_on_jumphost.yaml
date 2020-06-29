@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    # Check the jumphost credentials
+    - set_fact:
+        jh_ssh_private_key: "{{ lookup('env','JH_SSH_PRIVATE_KEY') }}"
+    - debug:
+        msg: "{{ jh_ssh_user }} {{ jh_ssh_private_key }}"
+    - debug:
+        msg: "{{ hostvars['127.0.0.1']['jh_ssh_user'] }} {{ hostvars['127.0.0.1']['jh_ssh_private_key'] }}"
+    - name: Run the hostname comm and on Jumphost
+      shell:
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {{ hostvars['127.0.0.1']['jh_ssh_private_key'] }} {{ jh_ssh_user }}@{{ jh_ip }} hostname
+
+- hosts: all
+  gather_facts: no
+  tasks:
+    # Run the hostname command on endpoint
+    - name: Check hostname of endpoint - This will use the endpoint credential
+      command: hostname
+    # Run the hostname command on delegated host
+    - name: Check hostname of delegated host - This will use the jumphost_endpoint defined in same inventory as the endpoint
+      command: hostname
+      delegate_to: jumphost_endpoint
+      vars:
+        ansible_user: "{{ hostvars['127.0.0.1']['jh_ssh_user'] }}"
+        ansible_ssh_private_key_file: "{{ hostvars['127.0.0.1']['jh_ssh_private_key'] }}"
+        ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+        ansible_ssh_host_key_checking: no
+
