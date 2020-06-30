@@ -47,6 +47,8 @@ p.cleanup_command(shell_id, command_id)
 p.close_shell(shell_id)
 print("status_code:",status_code)
 print("std_out:")
-print(str(std_out, 'ascii'))
+#print(str(std_out, 'ascii')) # python3 only
+print(str(std_out).encode('ascii'))
 print("std_err:")
-print(str(std_err, 'ascii'))
+#print(str(std_err, 'ascii')) # python3 only
+print(str(std_err).encode('ascii'))
