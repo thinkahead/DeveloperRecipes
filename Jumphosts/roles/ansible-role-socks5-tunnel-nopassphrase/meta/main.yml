@@ -1,7 +1,7 @@
 galaxy_info:
   author: Alexei Karve
   description: Establish tunnel via jumphost
-  company: IBM
+  company: DeveloperRecipes
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
