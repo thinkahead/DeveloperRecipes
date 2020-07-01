@@ -1,0 +1,17 @@
+---
+- name: Role ensures that the socks tunnel is setup
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-socks5-tunnel
+
+- hosts: all
+  gather_facts: no
+  tasks:
+    - setup:
+        gather_subset: '!all'
+      async: 60
+      poll: 5
+    - shell: echo Hello `hostname`
+      register: result
