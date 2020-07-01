@@ -1,0 +1,13 @@
+---
+- name: Role ensures that the socks tunnel is setup
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-ssh-add-jumphosts
+
+- hosts: all
+  gather_facts: no
+  tasks:
+    - shell: echo Hello `hostname`
+      register: result
