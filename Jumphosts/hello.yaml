@@ -2,5 +2,9 @@
 - hosts: all
   gather_facts: no
   tasks:
+    - setup:
+        gather_subset: '!all'
+      async: 60
+      poll: 5
     - shell: echo Hello `hostname`
       register: result
