@@ -1,0 +1,27 @@
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Do Ping
+      win_ping:
+      register: ping_output
+      ignore_unreachable: true
+
+    - debug:
+        var: ping_output
+
+    - win_shell: set
+      args:
+        executable: cmd
+      register: homedir_out
+
+    # Works on Windows 2016 and 2008 only if someone is logged in using that Userid
+    #- win_shell: echo '%HOMEDRIVE%%HOMEPATH%'
+    - win_shell: echo %SystemRoot% %USERPROFILE%
+      args:
+        executable: cmd
+      register: homedir_out
+    - debug:
+        var: homedir_out
+
+    - name: get powershell version
+      raw: $PSVersionTable
