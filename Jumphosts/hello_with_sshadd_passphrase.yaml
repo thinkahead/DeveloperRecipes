@@ -17,10 +17,13 @@
 - name: Role ensures that the socks tunnel is setup
   hosts: localhost
   connection: local
-  gather_facts: false
+  gather_facts: no
   environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts
+  tasks:
+    - debug:
+        msg: "{{ ansible_ssh_common_args }}"
 
 - hosts: all
   gather_facts: no
