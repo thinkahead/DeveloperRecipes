@@ -21,12 +21,11 @@
   environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts
-  tasks:
-    - debug:
-        msg: "{{ ansible_ssh_common_args }}"
 
 - hosts: all
   gather_facts: no
+  vars:
+     ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
   tasks:
     - shell: echo Hello `hostname`
       register: result
