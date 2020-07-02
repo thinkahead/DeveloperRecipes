@@ -21,15 +21,24 @@
   environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts
+  tasks
+    - set_fact:
+        endpoint_ssh_private_key: "{{ lookup('env','EP_SSH_PRIVATE_KEY') }}"
 
 - hosts: all
   gather_facts: no
   vars:
-     ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
-     ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
-     ansible_user: "{{ endpoint_ssh_user }}"
-     ansible_port: "{{ endpoint_ssh_port }}"
+    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+    endpoint_ssh_private_key: "{{ hostvars['127.0.0.1']['endpoint_ssh_private_key'] }}"
+    endpoint_ssh_user: "{{ hostvars['127.0.0.1']['endpoint_ssh_user'] }}"
+    endpoint_ssh_port: "{{ hostvars['127.0.0.1']['endpoint_ssh_port'] }}"
   tasks:
+    - include_vars:
+        file: include_endpointcred.yaml
+      when:
+        - endpoint_ssh_private_key is defined and endpoint_ssh_private_key!=''
+        - endpoint_ssh_user is defined and endpoint_ssh_user!=''
+        - endpoint_ssh_port is defined and endpoint_ssh_port!=''
     - shell: echo Hello `hostname`
       register: result
     - debug:
