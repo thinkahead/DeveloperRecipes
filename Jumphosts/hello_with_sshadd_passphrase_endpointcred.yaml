@@ -1,0 +1,47 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Start ssh-agent and Retrieve the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
+      shell: |
+        eval $(ssh-agent -s) > /dev/null
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
+      register: env_vars_stdout
+    - set_fact:
+        env_vars: "{{ env_vars_stdout.stdout }}"
+    - name: Print the environment variables
+      debug:
+        msg: "{{ env_vars }}"
+
+- name: Role ensures that the socks tunnel is setup
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  environment: "{{ env_vars }}"
+  roles:
+    - ansible-role-ssh-add-jumphosts
+
+- hosts: all
+  gather_facts: no
+  vars:
+     ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+     ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
+     ansible_user: "{{ endpoint_ssh_user }}"
+     ansible_port: "{{ endpoint_ssh_port }}"
+  tasks:
+    - shell: echo Hello `hostname`
+      register: result
+    - debug:
+        msg: "{{ result }}"
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Kill the ssh-agent
+      shell: |
+        echo $SSH_AUTH_SOCK
+        echo $SSH_AGENT_PID
+        ssh-agent -k
+      environment: "{{ env_vars }}"
