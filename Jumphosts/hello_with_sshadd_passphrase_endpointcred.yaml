@@ -21,7 +21,7 @@
   environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts
-  tasks
+  tasks:
     - set_fact:
         endpoint_ssh_private_key: "{{ lookup('env','EP_SSH_PRIVATE_KEY') }}"
 
