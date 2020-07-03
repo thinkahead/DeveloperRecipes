@@ -25,3 +25,9 @@
 
     - name: get powershell version
       raw: $PSVersionTable
+
+    - name: Copying files to all Windows Endpoints
+      win_copy:
+        content: abc123
+        #src : "windowstest.yaml"
+        dest: C:\Temp\foo.txt

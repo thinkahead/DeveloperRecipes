@@ -33,4 +33,10 @@
     - name: get powershell version
       raw: $PSVersionTable
 
+    - name: Copying files to all Windows Endpoints
+      win_copy:
+        content: abc123
+        #src : "windowstest_with_tunnel.yaml"
+        dest: C:\Temp\foo.txt
+
 # Tunnel will be killed at end of job because of ENABLE ISOLATED JOBS
