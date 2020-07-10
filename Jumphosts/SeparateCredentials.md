@@ -56,6 +56,7 @@ file:
 
 INPUT CONFIGURATION
 ```
+fields:
   - id: jh2_ip
     type: string
     label: Jumphost2 IP Address
@@ -103,6 +104,7 @@ file:
 
 INPUT CONFIGURATION
 ```
+fields:
   - id: jh3_ip
     type: string
     label: Jumphost3 IP Address
@@ -150,6 +152,7 @@ file:
 
 INPUT CONFIGURATION
 ```
+fields:
   - id: jh4_ip
     type: string
     label: Jumphost4 IP Address
@@ -197,6 +200,7 @@ file:
 
 INPUT CONFIGURATION
 ```
+fields:
   - id: jh5_ip
     type: string
     label: Jumphost5 IP Address
