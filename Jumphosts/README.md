@@ -3,8 +3,8 @@ Multiple Jumphosts in Ansible Tower
 
 **Author** Alexei Karve
 
-Creating Credential Types that contain ssh credentials for all hops in the path to reach the target host endpoint [Credential Types](Credentials.md)
-Creating separate Credential Types for each hop in the path [Separate Credential Types](SeparateCredentials.md)
+Creating Credential Types that contain ssh credentials for all hops in the path to reach the target host endpoint [Credential Types Primary Path](Credentials.md) [Credential Types Backup Path](CredentialsBackup.md)
+Creating separate Credential Types for each hop in the path [Separate Credential Types Primary Path](SeparateCredentials.md) [Separate Credential Types backup Path](SeparateCredentialsBackup.md)
 
 Multiple Jumphosts in Ansible Tower - Part 1: Connecting to Linux hosts using ssh with nested ProxyCommand https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-1
 
