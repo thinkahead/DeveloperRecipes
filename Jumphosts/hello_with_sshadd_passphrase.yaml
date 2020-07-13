@@ -14,7 +14,7 @@
       debug:
         msg: "{{ env_vars }}"
 
-- name: Role ensures that the socks tunnel is setup
+- name: Role ensures that ssh key passphrases are added to ssh-agent
   hosts: localhost
   connection: local
   gather_facts: no
