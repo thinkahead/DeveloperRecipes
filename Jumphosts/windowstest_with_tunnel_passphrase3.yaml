@@ -63,11 +63,10 @@
         - (jh5_ssh_private_key|length > 0)
       no_log: true
 
-- hosts: all
+- hosts: windows
   gather_facts: yes
   vars:
     ansible_psrp_proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}" # For Windows
-    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}" # For Linux
   tasks:
   - block:
     - name: Do Ping
@@ -102,9 +101,25 @@
         dest: C:\Temp\foo.txt
     when: ansible_os_family == "Windows"
 
+- hosts: linux
+  gather_facts: yes
+  vars:
+    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+    endpoint_ssh_private_key: "{{ hostvars['127.0.0.1']['endpoint_ssh_private_key'] }}"
+    endpoint_ssh_user: "{{ hostvars['127.0.0.1']['endpoint_ssh_user'] }}"
+    endpoint_ssh_port: "{{ hostvars['127.0.0.1']['endpoint_ssh_port'] }}"
+  tasks:
   - block:
-    - shell: |
-        cat /etc/*elease*
+    - include_vars:
+        file: include_endpointcred.yaml
+      when:
+        - endpoint_ssh_private_key is defined and endpoint_ssh_private_key!=''
+        - endpoint_ssh_user is defined and endpoint_ssh_user!=''
+        - endpoint_ssh_port is defined and endpoint_ssh_port!=''
+    - shell: echo Hello `hostname`;cat /etc/*elease*
+      register: result
+    - debug:
+        msg: "{{ result }}"
     when: ansible_os_family == "CentOS" or ansible_os_family == "Redhat" or ansible_os_family == "Darwin" or ansible_os_family == "Debian"
 
 - hosts: localhost
