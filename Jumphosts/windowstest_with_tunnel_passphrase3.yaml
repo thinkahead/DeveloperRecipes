@@ -1,0 +1,78 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Start ssh-agent and Retrieve the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
+      shell: |
+        eval $(ssh-agent -s) > /dev/null
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
+      register: env_vars_stdout
+    - set_fact:
+        env_vars: "{{ env_vars_stdout.stdout }}"
+    - name: Print the environment variables
+      debug:
+        msg: "{{ env_vars }}"
+
+- name: Role ensures that ssh key passphrases are added to ssh-agent
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  environment: "{{ env_vars }}"
+  roles:
+    - ansible-role-ssh-add-jumphosts
+
+- name: Role ensures that the socks tunnel is setup, the ssh keys may have a passphrase
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-socks5-tunnel
+
+- hosts: all
+  gather_facts: no
+  vars:
+    ansible_psrp_proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"
+  tasks:
+    - name: Do Ping
+      win_ping:
+      register: ping_output
+      ignore_unreachable: true
+
+    - debug:
+        var: ping_output
+
+    - win_shell: set
+      args:
+        executable: cmd
+      register: homedir_out
+
+    # Works on Windows 2016 and 2008 only if someone is logged in using that Userid
+    #- win_shell: echo '%HOMEDRIVE%%HOMEPATH%'
+    - win_shell: echo %SystemRoot% %USERPROFILE%
+      args:
+        executable: cmd
+      register: homedir_out
+    - debug:
+        var: homedir_out
+
+    - name: get powershell version
+      raw: $PSVersionTable
+
+    - name: Copying files to all Windows Endpoints
+      win_copy:
+        content: abc123
+        #src : "windowstest_with_tunnel_passphrase.yaml"
+        dest: C:\Temp\foo.txt
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Kill the ssh-agent
+      shell: |
+        echo $SSH_AUTH_SOCK
+        echo $SSH_AGENT_PID
+        ssh-agent -k
+      environment: "{{ env_vars }}"
+
+# Tunnel will be killed at end of job because of ENABLE ISOLATED JOBS
