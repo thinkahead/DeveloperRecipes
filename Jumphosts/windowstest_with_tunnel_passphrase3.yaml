@@ -20,6 +20,13 @@
   environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts
+  tasks:
+    - name: Setting of required socks_port variables for single jumphost
+      set_fact:
+        jh_socks_port: "{{ (jh_socks_port if jh_socks_port is defined else jh1_socks_port) | regex_replace('^socks.*://', '') | regex_replace('^/unixsocket', '') | regex_replace('^localhost:', '') | regex_replace('^127.0.0.1:', '') }}"
+      no_log: true
+    - debug:
+        var: jh_socks_port
 
 - name: Role ensures that the socks tunnel is setup, the ssh keys may have a passphrase
   hosts: localhost
