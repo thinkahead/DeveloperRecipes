@@ -103,7 +103,7 @@
     when: ansible_os_family == "Windows"
 
   - block:
-      - shell: |
+    - shell: |
         cat /etc/*elease*
     when: ansible_os_family == "CentOS" or ansible_os_family == "Redhat" or ansible_os_family == "Darwin" or ansible_os_family == "Debian"
 
