@@ -109,9 +109,8 @@
     endpoint_ssh_user: "{{ hostvars['127.0.0.1']['endpoint_ssh_user'] }}"
     endpoint_ssh_port: "{{ hostvars['127.0.0.1']['endpoint_ssh_port'] }}"
   tasks:
-  - debug:
-      msg: "{{ ansible_os_family }}"
-  #- block:
+    - debug:
+        msg: "{{ ansible_os_family }}"
     - include_vars:
         file: include_endpointcred.yaml
       when:
@@ -122,6 +121,7 @@
       register: result
     - debug:
         msg: "{{ result }}"
+  #- block:
   #  when: ansible_os_family == "CentOS" or ansible_os_family == "Redhat" or ansible_os_family == "Darwin" or ansible_os_family == "Debian"
 
 - hosts: localhost
