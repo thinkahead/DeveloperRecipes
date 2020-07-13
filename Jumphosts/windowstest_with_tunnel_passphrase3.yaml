@@ -64,10 +64,11 @@
       no_log: true
 
 - hosts: all
-  gather_facts: no
+  gather_facts: yes
   vars:
     ansible_psrp_proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"
   tasks:
+  - block:
     - name: Do Ping
       win_ping:
       register: ping_output
@@ -98,6 +99,16 @@
         content: abc123
         #src : "windowstest_with_tunnel_passphrase.yaml"
         dest: C:\Temp\foo.txt
+    when: ansible_os_family == "Windows"
+
+  - block:
+      shell: |
+        cat /etc/*elease*
+    when:
+      - ansible_os_family == "CentOS"
+      - ansible_os_family == "Redhat"
+      - ansible_os_family == "Darwin"
+      - ansible_os_family == "Debian"
 
 - hosts: localhost
   connection: local
