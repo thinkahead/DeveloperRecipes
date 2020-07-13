@@ -27,6 +27,8 @@
       no_log: true
     - debug:
         var: jh_socks_port
+    - set_fact:
+        endpoint_ssh_private_key: "{{ lookup('env','EP_SSH_PRIVATE_KEY') }}" # For Linux endpoint ssh private key
 
     - name: Creating socks tunnel for 1 jumphost
       shell: ssh -i {{ jh1_ssh_private_key }} -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -fN -D {{ jh_socks_port }} -p {{ jh1_ssh_port }} {{ jh1_ssh_user }}@{{ jh1_ip }};sleep 2
@@ -104,7 +106,7 @@
 - hosts: linux
   gather_facts: yes
   vars:
-    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}" # For Linux
     endpoint_ssh_private_key: "{{ hostvars['127.0.0.1']['endpoint_ssh_private_key'] }}"
     endpoint_ssh_user: "{{ hostvars['127.0.0.1']['endpoint_ssh_user'] }}"
     endpoint_ssh_port: "{{ hostvars['127.0.0.1']['endpoint_ssh_port'] }}"
