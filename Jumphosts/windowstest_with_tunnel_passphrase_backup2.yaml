@@ -1,0 +1,44 @@
+- name: Role ensures that the socks tunnel is setup, the ssh keys may have a passphrase
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-socks5-tunnel-backup2
+
+- hosts: windows
+  gather_facts: no
+  vars:
+    ansible_psrp_proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"
+  tasks:
+    - name: Do Ping
+      win_ping:
+      register: ping_output
+      ignore_unreachable: true
+
+    - debug:
+        var: ping_output
+
+    - win_shell: set
+      args:
+        executable: cmd
+      register: homedir_out
+
+    # Works on Windows 2016 and 2008 only if someone is logged in using that Userid
+    #- win_shell: echo '%HOMEDRIVE%%HOMEPATH%'
+    - win_shell: echo %SystemRoot% %USERPROFILE%
+      args:
+        executable: cmd
+      register: homedir_out
+    - debug:
+        var: homedir_out
+
+    - name: get powershell version
+      raw: $PSVersionTable
+
+    - name: Copying files to all Windows Endpoints
+      win_copy:
+        content: abc123
+        #src : "windowstest_with_tunnel_passphrase.yaml"
+        dest: C:\Temp\foo.txt
+
+# Tunnel will be killed at end of job because of ENABLE ISOLATED JOBS
