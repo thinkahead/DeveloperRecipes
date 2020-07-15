@@ -1,0 +1,47 @@
+---
+- name: Creating socks tunnel with optional passphrase for jumphost
+  #no_log: true
+  shell: |
+    export endpoint_ssh_private_key="{{ endpoint_ssh_private_key if (endpoint_ssh_private_key is defined and endpoint_ssh_private_key!='') else 'undefined-endpoint_ssh_private_key' }}"
+    export endpoint_ssh_private_key_passphrase="{{ endpoint_ssh_private_key_passphrase if endpoint_ssh_private_key_passphrase is defined else '' }}"
+    echo Debug in main.yml $endpoint_ssh_private_key $endpoint_ssh_private_key_passphrase
+
+    export jh5_ssh_private_key="{{ jh5_ssh_private_key if (jh5_ssh_private_key is defined and jh5_ssh_private_key!='') else 'undefined-jh5_ssh_private_key' }}"
+    export jh5_ssh_private_key_passphrase="{{ jh5_ssh_private_key_passphrase if jh5_ssh_private_key_passphrase is defined else '' }}"
+    export jh5_ip="{{ jh5_ip if jh5_ip is defined else '' }}"
+    export jh5_ssh_port="{{ jh5_ssh_port if jh5_ssh_port is defined else '' }}"
+    export jh5_ssh_user="{{ jh5_ssh_user if jh5_ssh_user is defined else '' }}"
+
+    export jh4_ssh_private_key="{{ jh4_ssh_private_key if (jh4_ssh_private_key is defined and jh4_ssh_private_key!='') else 'undefined-jh4_ssh_private_key' }}"
+    export jh4_ssh_private_key_passphrase="{{ jh4_ssh_private_key_passphrase if jh4_ssh_private_key_passphrase is defined else '' }}"
+    export jh4_ip="{{ jh4_ip if jh4_ip is defined else '' }}"
+    export jh4_ssh_port="{{ jh4_ssh_port if jh4_ssh_port is defined else '' }}"
+    export jh4_ssh_user="{{ jh4_ssh_user if jh4_ssh_user is defined else '' }}"
+
+    export jh3_ssh_private_key="{{ jh3_ssh_private_key if (jh3_ssh_private_key is defined and jh3_ssh_private_key!='') else 'undefined-jh3_ssh_private_key' }}"
+    export jh3_ssh_private_key_passphrase="{{ jh3_ssh_private_key_passphrase if jh3_ssh_private_key_passphrase is defined else '' }}"
+    export jh3_ip="{{ jh3_ip if jh3_ip is defined else '' }}"
+    export jh3_ssh_port="{{ jh3_ssh_port if jh3_ssh_port is defined else '' }}"
+    export jh3_ssh_user="{{ jh3_ssh_user if jh3_ssh_user is defined else '' }}"
+
+    export jh2_ssh_private_key="{{ jh2_ssh_private_key if (jh2_ssh_private_key is defined and jh2_ssh_private_key!='') else 'undefined-jh2_ssh_private_key' }}"
+    export jh2_ssh_private_key_passphrase="{{ jh2_ssh_private_key_passphrase if jh2_ssh_private_key_passphrase is defined else '' }}"
+    export jh2_ip="{{ jh2_ip if jh2_ip is defined else '' }}"
+    export jh2_ssh_port="{{ jh2_ssh_port if jh2_ssh_port is defined else '' }}"
+    export jh2_ssh_user="{{ jh2_ssh_user if jh2_ssh_user is defined else '' }}"
+
+    # The jh1_ssh_private_key and jh1_ssh_private_key_passphrase are environment variables, so must check they are not empty
+    export jh1_ssh_private_key="{{ jh1_ssh_private_key if (jh1_ssh_private_key is defined and jh1_ssh_private_key!='') else (jh_ssh_private_key if (jh_ssh_private_key is defined and jh_ssh_private_key!='') else 'undefined-jh1_ssh_private_key') }}"
+    export jh1_ssh_private_key_passphrase="{{ jh1_ssh_private_key_passphrase if (jh1_ssh_private_key_passphrase!='') else (jh_ssh_private_key_passphrase if jh_ssh_private_key_passphrase is defined else '') }}"
+    export jh1_ip="{{ jh1_ip if jh1_ip is defined else (jh_ip if jh_ip is defined else '') }}"
+    export jh1_ssh_port="{{ jh1_ssh_port if jh1_ssh_port is defined else (jh_ssh_port if jh_ssh_port is defined else '') }}"
+    export jh1_ssh_user="{{ jh1_ssh_user if jh1_ssh_user is defined else (jh_ssh_user if jh_ssh_user is defined else '') }}"
+
+    export jh1_socks_port="{{ jh1_socks_port if jh1_socks_port is defined else (jh_socks_port if jh_socks_port is defined else '') }}"
+    #olddir=`pwd`
+    #echo "{{ role_path if role_path is defined else 'roles' }}"
+    #ls "{{ role_path if role_path is defined else 'roles' }}"
+    cd "{{ role_path if role_path is defined else 'roles' }}/tasks"
+    #ls -las
+    ./login_with_expect.sh # provides passphrase where required by spawning ./jumphostlogin.sh to establish the tunnel
+    #cd "${olddir}"
