@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function enumerate {
+  echo $(for var in `echo $1 | tr , " "`; do echo $var; done | sort -R)
+  #echo $1 | tr , " "
+}
+
 TimeOutjh1=5
 TimeOutjh2=10
 TimeOutjh3=15
@@ -16,7 +21,7 @@ else
 fi
 
 echo "$jh1_ip -> $jh2_ip -> $jh3_ip -> $jh4_ip -> $jh5_ip"
-for jh1ip in $(echo $jh1_ip | sed "s/,/ /g"); do
+for jh1ip in $(enumerate $jh1_ip); do
   echo "Hop Testing $jh1ip"
   ssh -o ConnectTimeout=$TimeOutjh1 -i $jh1_ssh_private_key -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -p $jh1_ssh_port $jh1_ssh_user@$jh1ip -q exit
   retcode=$?
@@ -28,7 +33,7 @@ for jh1ip in $(echo $jh1_ip | sed "s/,/ /g"); do
     ssh -o ConnectTimeout=$TimeOutjh1 -i $jh1_ssh_private_key -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -fN -D $dparam -p $jh1_ssh_port $jh1_ssh_user@$jh1ip
     if [ $? -ne 0 ]; then pid=`ps -ef | grep ssh | grep "$dparam" | grep -v grep | awk '{print $2}'`; if [ ! -z "$pid" ]; then echo kill $pid; kill $pid; fi; else echo "Hops1 BREAK";break; fi
   else
-    for jh2ip in $(echo $jh2_ip | sed "s/,/ /g"); do
+    for jh2ip in $(enumerate $jh2_ip); do
       echo "Hop Testing $jh1ip -> $jh2ip"
       ssh -o ConnectTimeout=$TimeOutjh2 -i $jh2_ssh_private_key -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oProxyCommand="ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip" -p $jh2_ssh_port $jh2_ssh_user@$jh2ip -q exit
       retcode=$?
@@ -40,7 +45,7 @@ for jh1ip in $(echo $jh1_ip | sed "s/,/ /g"); do
         ssh -o ConnectTimeout=$TimeOutjh2 -i $jh2_ssh_private_key -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oProxyCommand="ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip" -fN -D $dparam -p $jh2_ssh_port $jh2_ssh_user@$jh2ip
         if [ $? -ne 0 ]; then pid=`ps -ef | grep ssh | grep "$dparam" | grep -v grep | awk '{print $2}'`; if [ ! -z "$pid" ]; then echo kill $pid; kill $pid; fi; else echo "Hops2 BREAK";break 2; fi
       else
-        for jh3ip in $(echo $jh3_ip | sed "s/,/ /g"); do
+        for jh3ip in $(enumerate $jh3_ip); do
           echo "Hop Testing $jh1ip -> $jh2ip -> $jh3ip"
           ssh -o ConnectTimeout=$TimeOutjh3 -i $jh3_ssh_private_key -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i $jh2_ssh_private_key -W $jh3ip:$jh3_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip\" -p $jh2_ssh_port $jh2_ssh_user@$jh2ip" -p $jh3_ssh_port $jh3_ssh_user@$jh3ip -q exit
           retcode=$?
@@ -52,7 +57,7 @@ for jh1ip in $(echo $jh1_ip | sed "s/,/ /g"); do
             ssh -o ConnectTimeout=$TimeOutjh3 -i $jh3_ssh_private_key -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i $jh2_ssh_private_key -W $jh3ip:$jh3_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip\" -p $jh2_ssh_port $jh2_ssh_user@$jh2ip" -fN -D $dparam -p $jh3_ssh_port $jh3_ssh_user@$jh3ip
             if [ $? -ne 0 ]; then pid=`ps -ef | grep ssh | grep "$dparam" | grep -v grep | awk '{print $2}'`; if [ ! -z "$pid" ]; then echo kill $pid; kill $pid; fi; else echo "Hops3 BREAK";break 3; fi
           else
-            for jh4ip in $(echo $jh4_ip | sed "s/,/ /g"); do
+            for jh4ip in $(enumerate $jh4_ip); do
               echo "Hop Testing $jh1ip -> $jh2ip -> $jh3ip -> $jh4ip"
               ssh -o ConnectTimeout=$TimeOutjh4 -i $jh4_ssh_private_key -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i $jh3_ssh_private_key -W $jh4ip:$jh4_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i $jh2_ssh_private_key -W $jh3ip:$jh3_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\"ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip\\\" -p $jh2_ssh_port $jh2_ssh_user@$jh2ip\" -p $jh3_ssh_port $jh3_ssh_user@$jh3ip" -p $jh4_ssh_port $jh4_ssh_user@$jh4ip -q exit
               retcode=$?
@@ -64,7 +69,7 @@ for jh1ip in $(echo $jh1_ip | sed "s/,/ /g"); do
                 ssh -o ConnectTimeout=$TimeOutjh4 -i $jh4_ssh_private_key -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i $jh3_ssh_private_key -W $jh4ip:$jh4_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i $jh2_ssh_private_key -W $jh3ip:$jh3_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\"ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip\\\" -p $jh2_ssh_port $jh2_ssh_user@$jh2ip\" -p $jh3_ssh_port $jh3_ssh_user@$jh3ip" -fN -D $dparam -p $jh4_ssh_port $jh4_ssh_user@$jh4ip
                 if [ $? -ne 0 ]; then pid=`ps -ef | grep ssh | grep "$dparam" | grep -v grep | awk '{print $2}'`; if [ ! -z "$pid" ]; then echo kill $pid; kill $pid; fi; else echo "Hops4 BREAK";break 4; fi
               else
-                for jh5ip in $(echo $jh5_ip | sed "s/,/ /g"); do
+                for jh5ip in $(enumerate $jh5_ip); do
                   echo "Using $jh1ip -> $jh2ip -> $jh3ip -> $jh4ip -> $jh5ip"
                   ssh -o ConnectTimeout=$TimeOutjh5 -i $jh5_ssh_private_key -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -i $jh4_ssh_private_key -W $jh5ip:$jh5_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\"ssh -i $jh3_ssh_private_key -W $jh4ip:$jh4_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\"ssh -i $jh2_ssh_private_key -W $jh3ip:$jh3_ssh_port -oPubkeyAuthentication=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\\\\\\\"ssh -i $jh1_ssh_private_key -W $jh2ip:$jh2_ssh_port -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -p $jh1_ssh_port $jh1_ssh_user@$jh1ip\\\\\\\" -p $jh2_ssh_port $jh2_ssh_user@$jh2ip\\\" -p $jh3_ssh_port $jh3_ssh_user@$jh3ip\" -p $jh4_ssh_port $jh4_ssh_user@$jh4ip" -p $jh5_ssh_port $jh5_ssh_user@$jh5ip -fN -D $dparam
                   if [ $? -ne 0 ]; then pid=`ps -ef | grep ssh | grep "$dparam" | grep -v grep | awk '{print $2}'`; if [ ! -z "$pid" ]; then echo kill $pid; kill $pid; fi; else echo "Hops5 BREAK";break 5; fi
