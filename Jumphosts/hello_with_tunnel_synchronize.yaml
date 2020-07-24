@@ -13,6 +13,9 @@
       synchronize:
         src: roles/
         dest: /tmp/roles/
+        use_ssh_args: yes
 
     - shell: echo Hello `hostname`; ls /tmp/roles
       register: result
+
+      #- shell: /usr/bin/rsync --delay-updates -F --compress --archive --rsh=/usr/bin/ssh -S none -o Port={{ ansible_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null --out-format=<<CHANGED>>%i %n%L roles/ ec2-user@aakrhel005.yellowykt.com:/tmp/roles/
