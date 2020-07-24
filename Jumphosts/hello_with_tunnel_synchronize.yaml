@@ -1,0 +1,18 @@
+---
+- name: Role ensures that the socks tunnel is setup
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-socks5-tunnel-nopassphrase
+- 
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Synchronization using rsync protocol (push)
+      synchronize:
+        src: roles/
+        dest: rsync://tmp/roles/
+
+    - shell: echo Hello `hostname`; ls /tmp/roles
+      register: result
