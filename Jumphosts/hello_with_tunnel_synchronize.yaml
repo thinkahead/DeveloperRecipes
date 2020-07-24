@@ -5,7 +5,7 @@
   gather_facts: false
   roles:
     - ansible-role-socks5-tunnel-nopassphrase
-- 
+ 
 - hosts: all
   gather_facts: no
   tasks:
