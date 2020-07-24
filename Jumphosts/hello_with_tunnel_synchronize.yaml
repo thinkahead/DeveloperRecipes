@@ -12,7 +12,7 @@
     - name: Synchronization using rsync protocol (push)
       synchronize:
         src: roles/
-        dest: rsync://tmp/roles/
+        dest: /tmp/roles/
 
     - shell: echo Hello `hostname`; ls /tmp/roles
       register: result
