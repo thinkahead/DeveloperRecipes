@@ -562,7 +562,7 @@ def main():
             cmd.append('--link-dest=%s' % link_path)
 
     changed_marker = '<<CHANGED>>'
-    cmd.append('--out-format=\'' + changed_marker + '%i %n%L\'')
+    cmd.append('--out-format=' + changed_marker + '%i %n%L')
 
     # expand the paths
     if '@' not in source:
@@ -587,7 +587,7 @@ def main():
 
         (rc, out, err) = module.run_command(
             cmd, pass_fds=_sshpass_pipe,
-            before_communicate_callback=_write_password_to_pipe)
+            before_communicate_callback=_write_password_to_pipe,use_unsafe_shell=True,expand_user_and_vars=False)
     else:
         (rc, out, err) = module.run_command(cmd)
 
