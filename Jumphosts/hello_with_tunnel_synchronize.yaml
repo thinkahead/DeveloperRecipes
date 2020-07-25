@@ -19,13 +19,12 @@
         ssh_private_key_file: '{{ keyout.stdout+ "/ssh_key_data" }}'
     - shell: |
         cat {{ ssh_private_key_file }}
+    - shell: |
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port }} -i "{{ lookup('env','JH1_SSH_PRIVATE_KEY') }}" -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i "{{ lookup('env','JH2_SSH_PRIVATE_KEY') }}" -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i "{{ lookup('env','JH1_SSH_PRIVATE_KEY') }}" -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"' roles/ ec2-user@aakrhel005.yellowykt.com:/tmp/roles/
 
 - hosts: all
   gather_facts: no
   tasks:
-    - shell: |
-        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port }} -i $JH1_SSH_PRIVATE_KEY -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i $JH2_SSH_PRIVATE_KEY -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i $JH1_SSH_PRIVATE_KEY -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"' roles/ ec2-user@aakrhel005.yellowykt.com:/tmp/roles/
-
     - name: Synchronization using rsync protocol (push)
       synchronize:
         src: roles/
@@ -35,7 +34,7 @@
         delete: yes
         private_key: "{{ lookup('env','JH1_SSH_PRIVATE_KEY') }}"
         rsync_opts:
-           - --rsh='ssh -q -oPort={{ ansible_port }} -i $JH1_SSH_PRIVATE_KEY -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i $JH2_SSH_PRIVATE_KEY -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i $JH1_SSH_PRIVATE_KEY -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"'
+          - --rsh='ssh -q -oPort={{ ansible_port }} -i $JH1_SSH_PRIVATE_KEY -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i $JH2_SSH_PRIVATE_KEY -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i $JH1_SSH_PRIVATE_KEY -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"'
 
     - shell: echo Hello `hostname`; ls /tmp/roles
       register: result
