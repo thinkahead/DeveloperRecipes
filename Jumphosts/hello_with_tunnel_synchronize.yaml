@@ -13,9 +13,9 @@
       synchronize:
         src: roles/
         dest: /tmp/roles/
-        use_ssh_args: yes
+        #use_ssh_args: yes
+        rsync_opts:
+           - --rsh='ssh -q -oProxyCommand="ssh -q -i $JH2_SSH_PRIVATE_KEY -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i  $JH1_SSH_PRIVATE_KEY -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"'
 
     - shell: echo Hello `hostname`; ls /tmp/roles
       register: result
-
-      #- shell: /usr/bin/rsync --delay-updates -F --compress --archive --rsh=/usr/bin/ssh -S none -o Port={{ ansible_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null --out-format=<<CHANGED>>%i %n%L roles/ ec2-user@aakrhel005.yellowykt.com:/tmp/roles/
