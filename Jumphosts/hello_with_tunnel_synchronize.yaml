@@ -6,11 +6,21 @@
 #  roles:
 #    - ansible-role-socks5-tunnel-nopassphrase
 # 
+- name: Role ensures that the socks tunnel is setup
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - shell: |
+        ls -las
+        ls -las ..
+        pwd
+
 - hosts: all
   gather_facts: no
   tasks:
     - debug:
-        msg: "{{ ansible_ssh_private_key_file if ansible_ssh_private_key_file is defined else 'unknown' }}"
+        msg: "{{ ansible_ssh_private_key if ansible_ssh_private_key is defined else 'unknown' }}"
     - name: Synchronization using rsync protocol (push)
       synchronize:
         src: roles/
@@ -18,7 +28,7 @@
         #use_ssh_args: yes
         dest_port: "{{ ansible_port }}"
         delete: yes
-        #private_key: "{{ ansible_ssh_private_key_file }}"
+        private_key: "{{ lookup('env','JH1_SSH_PRIVATE_KEY') }}"
         rsync_opts:
            - --rsh='ssh -q -oProxyCommand="ssh -q -i $JH2_SSH_PRIVATE_KEY -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i $JH1_SSH_PRIVATE_KEY -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"'
 
