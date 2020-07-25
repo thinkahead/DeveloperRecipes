@@ -12,6 +12,9 @@
   gather_facts: false
   tasks:
     - shell: |
+        pwd
+        ls -las ../..
+        ls -las ../../artifacts
         ls -las ../../../artifacts
         cd ../../../artifacts/{{ tower_job_id }}/ssh_key_data
         pwd
@@ -19,8 +22,9 @@
 - hosts: all
   gather_facts: no
   tasks:
-    - debug:
-        msg: "{{ ansible_ssh_private_key if ansible_ssh_private_key is defined else 'unknown' }}"
+    - shell: |
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port }} -i $JH1_SSH_PRIVATE_KEY -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i $JH2_SSH_PRIVATE_KEY -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i $JH1_SSH_PRIVATE_KEY -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"' roles/ ec2-user@aakrhel005.yellowykt.com:/tmp/roles/
+
     - name: Synchronization using rsync protocol (push)
       synchronize:
         src: roles/
