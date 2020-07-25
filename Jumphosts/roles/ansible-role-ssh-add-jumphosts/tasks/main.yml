@@ -52,6 +52,7 @@
     #echo $SSH_AUTH_SOCK
     ./login_with_expect.sh # provides passphrase where required by spawning ./jumphostlogin.sh to establish the tunnel
     #cd "${olddir}"
+    ssh-add -l
 
 - name: 0 jumphosts
   set_fact:
