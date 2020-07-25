@@ -13,7 +13,7 @@
   tasks:
     - shell: |
         ls -las ../../../artifacts
-        cd ../../../artifacts/{{ job_id }}/ssh_key_data
+        cd ../../../artifacts/{{ tower_job_id }}/ssh_key_data
         pwd
 
 - hosts: all
