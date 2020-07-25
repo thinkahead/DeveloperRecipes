@@ -12,8 +12,8 @@
   gather_facts: false
   tasks:
     - shell: |
-        ls -las
-        ls -las ..
+        ls -las ../../../artifacts
+        cd ../../../artifacts/{{ job_id }}/ssh_key_data
         pwd
 
 - hosts: all
