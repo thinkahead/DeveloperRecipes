@@ -23,10 +23,6 @@
         echo SSH_AGENT_PID=$SSH_AGENT_PID
         true
 
-    # 3 Jumphosts with --out-format
-    #- shell: |
-    #    /usr/bin/rsync -avz -e 'ssh -q -oPort={{ endpoint_ssh_port }} -i {{ lookup('env','EP_SSH_PRIVATE_KEY') }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -o ProxyCommand="ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}\""\""\"" {{ jh2_ssh_user }}@{{ jh2_ip }}"" {{ jh3_ssh_user }}@{{ jh3_ip }}" {{ endpoint_ssh_user }}@{{ endpoint_ip }}' /tmp/roles/ :/tmp/roles/
-
     # 2 Jumphosts with --out-format
     #- shell: |
     #    /usr/bin/rsync --delay-updates -F --compress --delete-after --archive --rsh='ssh -q -oPort={{ endpoint_ssh_port }} -i {{ lookup('env','EP_SSH_PRIVATE_KEY') }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}"' --out-format='<<CHANGED>>%i %n%L' roles/ ec2-user@aakrhel005.yellowykt.com:/tmp/roles/
