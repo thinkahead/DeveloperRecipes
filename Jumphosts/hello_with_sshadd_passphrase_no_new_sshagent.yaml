@@ -13,6 +13,9 @@
     - name: Print the environment variables
       debug:
         msg: "{{ env_vars }}"
+    - name: Show the ssh keys added to ssh-agent after machine credential is added
+      shell: |
+        ssh-add -l
 
 - name: Role ensures that ssh key passphrases are added to ssh-agent
   hosts: localhost
@@ -21,6 +24,10 @@
   environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts
+  tasks:
+    - name: Show the ssh keys added to ssh-agent after jumphosts are added
+      shell: |
+        ssh-add -l
 
 - hosts: all
   gather_facts: no
