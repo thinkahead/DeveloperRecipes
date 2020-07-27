@@ -23,6 +23,8 @@
      dest: "/tmp/roles/"
      src: "roles/"
   tasks: 
+    - set_fact:
+        my_hostname: "{{ ansible_host }}"
     - debug:
         msg:
           - "ansible_user: {{ ansible_user }}"
@@ -32,9 +34,14 @@
     - shell: |
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
         hostname
-        ssh-add -l
+        ssh-add -l # Shows that we have the machine credential added to ssh-agent
         pwd
-        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ ansible_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH5_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W {{ jh5_ip }}:{{ jh5_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\'"\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'"\'' {{ jh2_ssh_user }}@{{ jh2_ip }}'\'' {{ jh3_ssh_user }}@{{ jh3_ip }}\""\""\"" {{ jh4_ssh_user }}@{{ jh4_ip }}"" {{ jh5_ssh_user }}@{{ jh5_ip }}" {{ ansible_user }}@{{ ansible_host }}' "{{ src }}" ":{{ dest }}"
+        ls {{ lookup('env','JH5_SSH_PRIVATE_KEY') }}
+        ls {{ lookup('env','JH4_SSH_PRIVATE_KEY') }}
+        ls {{ lookup('env','JH3_SSH_PRIVATE_KEY') }}
+        ls {{ lookup('env','JH2_SSH_PRIVATE_KEY') }}
+        ls {{ lookup('env','JH1_SSH_PRIVATE_KEY') }}
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ ansible_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH5_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W {{ jh5_ip }}:{{ jh5_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\'"\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'"\'' {{ jh2_ssh_user }}@{{ jh2_ip }}'\'' {{ jh3_ssh_user }}@{{ jh3_ip }}\""\""\"" {{ jh4_ssh_user }}@{{ jh4_ip }}"" {{ jh5_ssh_user }}@{{ jh5_ip }}" {{ ansible_user }}@{{ my_hostname }}' "{{ src }}" ":{{ dest }}"
       when: jh5_ip is defined
       delegate_to: localhost
       #environment: "{{ hostvars['127.0.0.1']['env_vars'] }}"
