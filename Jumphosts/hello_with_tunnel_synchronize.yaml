@@ -2,8 +2,16 @@
 - hosts: all
   gather_facts: no
   vars:
-    ansible_ssh_common_args: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'ssh -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'"'"'"'"'"'"'ssh -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -m hmac-sha1 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'"'"'"'"'"'"'"'"' {{ jh2_ssh_user }}@{{ jh2_ip }}'"'"' {{ jh3_ssh_user }}@{{ jh3_ip }}'  
-    #ansible_ssh_common_args: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'ssh -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'"'"' {{ jh2_ssh_user }}@{{ jh2_ip }}'  
+    # 4 hops
+    ansible_ssh_common_args: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'"'"'"'"'"'"'ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"'"' {{ jh2_ssh_user }}@{{ jh2_ip }}'"'"'"'"'"'"'"'"' {{ jh3_ssh_user }}@{{ jh3_ip }}'"'"' {{ jh4_ssh_user }}@{{ jh4_ip }}'
+
+    # 3 hops
+    #ansible_ssh_common_args: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'ssh -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'"'"'"'"'"'"'ssh -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -m hmac-sha1 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'"'"'"'"'"'"'"'"' {{ jh2_ssh_user }}@{{ jh2_ip }}'"'"' {{ jh3_ssh_user }}@{{ jh3_ip }}'
+ 
+    # 2 hops
+    #ansible_ssh_common_args: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='"'"'ssh -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'"'"' {{ jh2_ssh_user }}@{{ jh2_ip }}'
+
+    # 1 hop
     #ansible_ssh_common_args: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'  
   tasks:
     - name: Synchronization using rsync protocol (push)
