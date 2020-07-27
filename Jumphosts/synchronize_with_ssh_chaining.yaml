@@ -10,7 +10,7 @@
   hosts: all
   gather_facts: no
   vars:
-          dest: ":/tmp/roles/"
+     dest: ":/tmp/roles/"
      src: "roles/"
   tasks:
     - set_fact:
