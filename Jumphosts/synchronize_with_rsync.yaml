@@ -1,5 +1,5 @@
 ---
-- name: Role ensures that the socks tunnel is setup
+- name: Role ensures that the ssh keys are added
   hosts: localhost
   connection: local
   gather_facts: false
