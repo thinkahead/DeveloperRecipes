@@ -1,7 +1,7 @@
 ---
 - shell: |
     echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
-    register: env_vars_stdout_temp
+  register: env_vars_stdout_temp
   when: env_vars is not defined
 - set_fact:
     env_vars: "{{ env_vars | default(env_vars_stdout_temp.stdout) }}"
