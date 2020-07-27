@@ -42,11 +42,11 @@
         echo "Cannot use ansible_host: {{ ansible_host }}, but can use the my_hostname: {{ my_hostname }} for target hostname"
         echo "Current directory `pwd`"
         echo Show the jumphost keys
-        ls {{ lookup('env','JH5_SSH_PRIVATE_KEY') }}
-        ls {{ lookup('env','JH4_SSH_PRIVATE_KEY') }}
-        ls {{ lookup('env','JH3_SSH_PRIVATE_KEY') }}
-        ls {{ lookup('env','JH2_SSH_PRIVATE_KEY') }}
-        ls {{ lookup('env','JH1_SSH_PRIVATE_KEY') }}
+        if [ ! -z "{{ lookup('env','JH5_SSH_PRIVATE_KEY') }}" ]; then ls "{{ lookup('env','JH5_SSH_PRIVATE_KEY') }}"; fi
+        if [ ! -z "{{ lookup('env','JH4_SSH_PRIVATE_KEY') }}" ]; then ls "{{ lookup('env','JH4_SSH_PRIVATE_KEY') }}"; fi
+        if [ ! -z "{{ lookup('env','JH3_SSH_PRIVATE_KEY') }}" ]; then ls "{{ lookup('env','JH3_SSH_PRIVATE_KEY') }}"; fi
+        if [ ! -z "{{ lookup('env','JH2_SSH_PRIVATE_KEY') }}" ]; then ls "{{ lookup('env','JH2_SSH_PRIVATE_KEY') }}"; fi
+        if [ ! -z "{{ lookup('env','JH1_SSH_PRIVATE_KEY') }}" ]; then ls "{{ lookup('env','JH1_SSH_PRIVATE_KEY') }}"; fi
         true
       delegate_to: localhost
       #environment: "{{ hostvars['127.0.0.1']['env_vars'] }}"
