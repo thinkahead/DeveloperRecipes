@@ -27,19 +27,21 @@
      src: "roles/"
   tasks: 
     - set_fact:
-        my_hostname: "{{ ansible_host }}"
+        my_user: "{{ ansible_user }}"
+        my_host: "{{ ansible_host }}"
+        my_port: "{{ ansible_port | default(22) }}"
     - debug:
         msg:
-          - "ansible_user: {{ ansible_user }}"
-          - "ansible_host: {{ ansible_host }}"
-          - "ansible_port: {{ ansible_port | default(22) }}"
-          - "ansible_ssh_private_key_file: {{ hostvars['127.0.0.1']['machine_credential_ssh_private_key_file'] }}"
+          - "my_user: {{ my_user }}"
+          - "my_host: {{ my_host }}"
+          - "my_port: {{ my_port }}"
+          #- "my_ssh_private_key_file: {{ hostvars['127.0.0.1']['machine_credential_ssh_private_key_file'] }}"
     - name: Check the host where the rsync command runs
       shell: |
         echo Running on `hostname`
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
         ssh-add -l # Shows that we have the machine credential added to ssh-agent
-        echo "Cannot use ansible_host: {{ ansible_host }}, but can use the my_hostname: {{ my_hostname }} for target hostname"
+        echo "Cannot use ansible_host: {{ ansible_host }}, but can use the my_host: {{ my_host }} for target hostname"
         echo "Current directory `pwd`"
         echo Show the jumphost keys
         if [ ! -z "{{ lookup('env','JH5_SSH_PRIVATE_KEY') }}" ]; then ls "{{ lookup('env','JH5_SSH_PRIVATE_KEY') }}"; fi
@@ -53,7 +55,7 @@
 
     - name: 5 hops
       shell: |
-        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH5_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W {{ jh5_ip }}:{{ jh5_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\'"\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'"\'' {{ jh2_ssh_user }}@{{ jh2_ip }}'\'' {{ jh3_ssh_user }}@{{ jh3_ip }}\""\""\"" {{ jh4_ssh_user }}@{{ jh4_ip }}"" {{ jh5_ssh_user }}@{{ jh5_ip }}" {{ ansible_user }}@{{ my_hostname }}' "{{ src }}" ":{{ dest }}"
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH5_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W {{ jh5_ip }}:{{ jh5_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\'"\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'"\'' {{ jh2_ssh_user }}@{{ jh2_ip }}'\'' {{ jh3_ssh_user }}@{{ jh3_ip }}\""\""\"" {{ jh4_ssh_user }}@{{ jh4_ip }}"" {{ jh5_ssh_user }}@{{ jh5_ip }}" {{ my_user }}@{{ my_host }}' "{{ src }}" ":{{ dest }}"
       when:
         - jh6_ip is not defined or jh6_ip==""
         - jh5_ip is defined and jh5_ip!=""
@@ -61,7 +63,7 @@
 
     - name: 4 hops
       shell: |
-        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'' {{ jh2_ssh_user }}@{{ jh2_ip }}\""\""\"" {{ jh3_ssh_user }}@{{ jh3_ip }}"" {{ jh4_ssh_user }}@{{ jh4_ip }}" {{ ansible_user }}@{{ my_hostname }}' "{{ src }}" ":{{ dest }}"
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'' {{ jh2_ssh_user }}@{{ jh2_ip }}\""\""\"" {{ jh3_ssh_user }}@{{ jh3_ip }}"" {{ jh4_ssh_user }}@{{ jh4_ip }}" {{ my_user }}@{{ my_host }}' "{{ src }}" ":{{ dest }}"
       when:
         - jh5_ip is not defined or jh5_ip==""
         - jh4_ip is defined and jh4_ip!=""
@@ -69,7 +71,7 @@
 
     - name: 3 hops
       shell: |
-        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -o ProxyCommand="ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}\""\""\"" {{ jh2_ssh_user }}@{{ jh2_ip }}"" {{ jh3_ssh_user }}@{{ jh3_ip }}" {{ ansible_user }}@{{ my_hostname }}' "{{ src }}" ":{{ dest }}"
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -o ProxyCommand="ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}\""\""\"" {{ jh2_ssh_user }}@{{ jh2_ip }}"" {{ jh3_ssh_user }}@{{ jh3_ip }}" {{ my_user }}@{{ my_host }}' "{{ src }}" ":{{ dest }}"
       when:
         - jh4_ip is not defined or jh4_ip==""
         - jh3_ip is defined and jh3_ip!=""
@@ -77,7 +79,7 @@
   
     - name: 2 hops
       shell: |
-        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}" {{ ansible_user }}@{{ my_hostname }}' roles/ :/tmp/roles/
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}" {{ my_user }}@{{ my_host }}' roles/ :/tmp/roles/
       when:
         - jh3_ip is not defined or jh3_ip==""
         - jh2_ip is defined and jh2_ip!=""
@@ -85,7 +87,7 @@
 
     - name: 1 hop using jh1
       shell: |
-        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}" {{ ansible_user }}@{{ my_hostname }}' roles/ :/tmp/roles/
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}" {{ my_user }}@{{ my_host }}' roles/ :/tmp/roles/
       when:
         - jh2_ip is not defined or jh2_ip==""
         - jh_ip is not defined or jh_ip==""
@@ -94,7 +96,7 @@
 
     - name: 1 hop using jh
       shell: |
-        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh_ssh_user }}@{{ jh_ip }}" {{ ansible_user }}@{{ my_hostname }}' roles/ :/tmp/roles/
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh_ssh_user }}@{{ jh_ip }}" {{ my_user }}@{{ my_host }}' roles/ :/tmp/roles/
       when:
         - jh2_ip is not defined or jh2_ip==""
         - jh1_ip is not defined or jh1_ip==""
@@ -103,7 +105,7 @@
 
     - name: 0 hops
       shell: |
-        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ ansible_port | default(22) }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ ansible_user }}@{{ my_hostname }}' roles/ :/tmp/roles/
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ my_user }}@{{ my_host }}' roles/ :/tmp/roles/
       when:
         - jh1_ip is not defined or jh1_ip==""
         - jh_ip is not defined or jh_ip==""
@@ -111,7 +113,7 @@
 
     #- name: 2 hops with synchronize module style
     #  shell: |
-    #    /usr/bin/rsync --delay-updates -F --compress --delete-after --archive --rsh='ssh -q -oPort={{ ansible_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}" {{ ansible_user }}@{{ my_hostname }}' --out-format='<<CHANGED>>%i %n%L' roles/ :/tmp/roles/
+    #    /usr/bin/rsync --delay-updates -F --compress --delete-after --archive --rsh='ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}" {{ my_user }}@{{ my_host }}' --out-format='<<CHANGED>>%i %n%L' roles/ :/tmp/roles/
     #  when:
     #    - jh3_ip is not defined
     #    - jh2_ip is defined
