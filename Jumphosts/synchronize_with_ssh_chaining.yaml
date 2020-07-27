@@ -10,7 +10,7 @@
   hosts: all
   gather_facts: no
   vars:
-     dest: "/tmp/roles/"
+          dest: ":/tmp/roles/"
      src: "roles/"
   tasks:
     - set_fact:
@@ -24,5 +24,5 @@
         #use_ssh_args: yes
         delete: yes
         rsync_opts:
-          - --rsh='ssh -o Port={{ jh1_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh1_ssh_user }}@{{ jh1_ip }} ssh -o Port={{ jh2_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh2_ssh_user }}@{{ jh2_ip }} ssh -o Port={{ jh3_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh3_ssh_user }}@{{ jh3_ip }} ssh -o Port={{ jh4_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh4_ssh_user }}@{{ jh4_ip }} ssh -o Port={{ jh5_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh5_ssh_user }}@{{ jh5_ip }} ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -A'
+          - --rsh='ssh -o Port={{ jh1_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh1_ssh_user }}@{{ jh1_ip }} ssh -o Port={{ jh2_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh2_ssh_user }}@{{ jh2_ip }} ssh -o Port={{ jh3_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh3_ssh_user }}@{{ jh3_ip }} ssh -o Port={{ jh4_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh4_ssh_user }}@{{ jh4_ip }} ssh -o Port={{ jh5_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh5_ssh_user }}@{{ jh5_ip }} ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -A {{ my_user }}@{{ my_host }}'
  
