@@ -24,7 +24,7 @@
         dest_port: "{{ ansible_port }}"
         delete: yes
       vars:
-        ansible_ssh_common_args: '{{ ansible_ssh_common_args_5hops if jh5_ip is defined else (ansible_ssh_common_args_4hops if jh4_ip is defined else (ansible_ssh_common_args_3hops if jh3_ip is defined else (ansible_ssh_common_args_2hops if jh2_ip is defined else (ansible_ssh_common_args_1hop if jh1_ip is defined else ""))))'
+        ansible_ssh_common_args: '{{ ansible_ssh_common_args_5hops if jh5_ip is defined else (ansible_ssh_common_args_4hops if jh4_ip is defined else (ansible_ssh_common_args_3hops if jh3_ip is defined else (ansible_ssh_common_args_2hops if jh2_ip is defined else (ansible_ssh_common_args_1hop if jh1_ip is defined else "")))) }}'
 
 
 #- name: Role ensures that the socks tunnel is setup
