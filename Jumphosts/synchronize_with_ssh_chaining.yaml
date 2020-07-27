@@ -1,0 +1,44 @@
+---
+- name: Role ensures that the ssh keys are added
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-ssh-add-jumphosts-all
+
+- name: Use the synchronize module across multiple jumphosts
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: 5 hops
+      set_fact:
+        ansible_ssh_common_args_5hops: ssh -o Port={{ jh1_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh1_ip }}:{{ jh1_ssh_port }} ssh -o Port={{ jh2_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh2_ip }}:{{ jh2_ssh_port }} ssh -o Port={{ jh3_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh3_ip }}:{{ jh3_ssh_port }} ssh -o Port={{ jh4_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh4_ip }}:{{ jh4_ssh_port }} ssh -o Port={{ jh5_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh5_ip }}:{{ jh5_ssh_port }}
+      when: jh5_ip is defined
+
+    - block:
+        - name: Synchronization using rsync protocol (push)
+          synchronize:
+            src: roles/
+            dest: /tmp/roles/
+            use_ssh_args: yes
+            dest_port: "{{ ansible_port }}"
+            delete: yes
+        - name: Show hello `hostname` using the new ansible_ssh_common_args
+          shell: |
+            echo Hello `hostname`
+      vars:
+        ansible_ssh_common_args: '{{ ansible_ssh_common_args_5hops if jh5_ip is defined else (ansible_ssh_common_args_4hops if jh4_ip is defined else (ansible_ssh_common_args_3hops if jh3_ip is defined else (ansible_ssh_common_args_2hops if jh2_ip is defined else (ansible_ssh_common_args_1hop if (jh1_ip is defined or jh_ip is defined) else "")))) }}'
+
+    - name: Show hello `hostname` using the ControlPath set by the shell command executed in block above
+      shell: |
+        echo Hello `hostname`
+
+    - name: Show hello `hostname` using the ansible_ssh_common_args set by the role
+      shell: |
+        echo Hello `hostname`
+      vars:
+        ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+
+    - name: Show hello `hostname` using the ControlPath set by the shell command executed in task above
+      shell: |
+        echo Hello `hostname`
