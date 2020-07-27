@@ -30,6 +30,10 @@
       set_fact:
         ansible_ssh_common_args_1hop: -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='ssh -i {{ lookup('env','JH_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh_ssh_user }}@{{ jh_ip }}'  
       when: "{{ jh_ip is defined }}"
+    - debug:
+        msg: "{{ ansible_ssh_common_args }}"
+      vars:
+        ansible_ssh_common_args: '{{ ansible_ssh_common_args_5hops if jh5_ip is defined else (ansible_ssh_common_args_4hops if jh4_ip is defined else (ansible_ssh_common_args_3hops if jh3_ip is defined else (ansible_ssh_common_args_2hops if jh2_ip is defined else (ansible_ssh_common_args_1hop if (jh1_ip is defined or jh_ip is defined) else "")))) }}'
 
     - name: Synchronization using rsync protocol (push)
       synchronize:
