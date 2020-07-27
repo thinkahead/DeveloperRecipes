@@ -57,3 +57,5 @@
     - name: Show hello `hostname` using the ansible_ssh_common_args set by the role
       shell: |
         echo Hello `hostname`
+      vars:
+        ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
