@@ -48,9 +48,9 @@
             use_ssh_args: yes
             dest_port: "{{ ansible_port }}"
             delete: yes
-        - name: Show hello `hostname` using the new ansible_ssh_common_args
-          shell: |
-            echo Hello `hostname`
+        #- name: Show hello `hostname` using the new ansible_ssh_common_args
+        #  shell: |
+        #    echo Hello `hostname`
       vars:
         ansible_ssh_common_args: '{{ ansible_ssh_common_args_5hops if jh5_ip is defined else (ansible_ssh_common_args_4hops if jh4_ip is defined else (ansible_ssh_common_args_3hops if jh3_ip is defined else (ansible_ssh_common_args_2hops if jh2_ip is defined else (ansible_ssh_common_args_1hop if (jh1_ip is defined or jh_ip is defined) else "")))) }}'
 
