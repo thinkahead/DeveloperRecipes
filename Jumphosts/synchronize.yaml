@@ -1,4 +1,11 @@
 ---
+- name: Role ensures that the ssh keys are added
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-ssh-add-jumphosts
+
 - name: Use the synchronize module across multiple jumphosts
   hosts: all
   gather_facts: no
