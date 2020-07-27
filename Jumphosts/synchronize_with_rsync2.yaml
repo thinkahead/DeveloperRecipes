@@ -1,0 +1,56 @@
+---
+- name: Use rsync to push files to target host
+  hosts: localhost
+  connection: local
+  vars:
+     dest: "/tmp/roles/"
+     src: "roles/"
+  tasks: 
+    - shell: |
+        realpath ../../artifacts/{{ tower_job_id }}/ssh_key_data
+      register: keyout
+    - set_fact:
+        machine_credential_ssh_private_key_file: '{{ keyout.stdout }}'
+    - shell: |
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
+      register: env_vars_stdout
+    - set_fact:
+        env_vars: "{{ env_vars_stdout.stdout }}"
+    - shell: |
+        ssh-add -l
+  tasks: 
+    # 5 Jumphosts with -avz
+    - shell: |
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ endpoint_ssh_port }} -i {{ machine_credential_ssh_private_key_file }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH5_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W {{ jh5_ip }}:{{ jh5_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\'"\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'"\'' {{ jh2_ssh_user }}@{{ jh2_ip }}'\'' {{ jh3_ssh_user }}@{{ jh3_ip }}\""\""\"" {{ jh4_ssh_user }}@{{ jh4_ip }}"" {{ jh5_ssh_user }}@{{ jh5_ip }}" {{ endpoint_ssh_user }}@{{ endpoint_ip }}' "{{ src }}" ":{{ dest }}"
+      when:
+        - jh6_ip is not defined
+        - jh5_ip is defined
+
+    # 4 Jumphosts with -avz
+    - shell: |
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ endpoint_ssh_port }} -i {{ machine_credential_ssh_private_key_file }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH4_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W {{ jh4_ip }}:{{ jh4_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand='\''ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}'\'' {{ jh2_ssh_user }}@{{ jh2_ip }}\""\""\"" {{ jh3_ssh_user }}@{{ jh3_ip }}"" {{ jh4_ssh_user }}@{{ jh4_ip }}" {{ endpoint_ssh_user }}@{{ endpoint_ip }}' "{{ src }}" ":{{ dest }}"
+      when:
+        - jh5_ip is not defined
+        - jh4_ip is defined
+
+    # 3 Jumphosts with -avz {{ lookup('env','EP_SSH_PRIVATE_KEY') }}
+    - shell: |
+        /usr/bin/rsync -avz -e 'ssh -q -oPort={{ endpoint_ssh_port }} -i {{ machine_credential_ssh_private_key_file }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -o ProxyCommand="ssh -q -i {{ lookup('env','JH3_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W {{ jh3_ip }}:{{ jh3_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=\""\""\""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}\""\""\"" {{ jh2_ssh_user }}@{{ jh2_ip }}"" {{ jh3_ssh_user }}@{{ jh3_ip }}" {{ endpoint_ssh_user }}@{{ endpoint_ip }}' "{{ src }}" ":{{ dest }}"
+      when:
+        - jh4_ip is not defined
+        - jh3_ip is defined
+  
+    # 2 Jumphosts with --out-format
+    - shell: |
+        /usr/bin/rsync --delay-updates -F --compress --delete-after --archive --rsh='ssh -q -oPort={{ endpoint_ssh_port }} -i {{ lookup('env','EP_SSH_PRIVATE_KEY') }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}" {{ endpoint_ssh_user }}@{{ endpoint_ip }}' --out-format='<<CHANGED>>%i %n%L' roles/ :/tmp/roles/
+      when:
+        - jh3_ip is not defined
+        - jh2_ip is defined
+
+    # 2 Jumphosts with -avz
+    - shell: |
+        /usr/bin/rsync -avz --rsh='ssh -q -oPort={{ endpoint_ssh_port }} -i {{ lookup('env','EP_SSH_PRIVATE_KEY') }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand="ssh -q -i {{ lookup('env','JH2_SSH_PRIVATE_KEY') }} -W %h:%p -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oProxyCommand=""ssh -q -i {{ lookup('env','JH1_SSH_PRIVATE_KEY') }} -W {{ jh2_ip }}:{{ jh2_ssh_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null {{ jh1_ssh_user }}@{{ jh1_ip }}"" {{ jh2_ssh_user }}@{{ jh2_ip }}" {{ endpoint_ssh_user }}@{{ endpoint_ip }}' roles/ :/tmp/roles/
+      when:
+        - jh3_ip is not defined
+        - jh2_ip is defined
+
