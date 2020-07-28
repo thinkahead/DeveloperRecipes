@@ -26,6 +26,12 @@
         rsync_opts:
           - --rsh={{ ("ssh -o Port="+jh1_ssh_port+" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A "+jh1_ssh_user+"@"+jh1_ip if jh1_ip is defined and jh1_ip!="")+(" ssh -o Port="+jh2_ssh_port+" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A "+jh2_ssh_user+"@"+jh2_ip if jh2_ip is defined and jh2_ip!="")+(" ssh -o Port="+jh3_ssh_port+" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A "+jh3_ssh_user+"@"+jh3_ip if jh3_ip is defined and jh3_ip!="")+(" ssh -o Port="+jh4_ssh_port+" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A "+jh4_ssh_user+"@"+jh4_ip if jh4_ip is defined and jh4_ip!="")+(" ssh -o Port="+jh5_ssh_port+" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A "+jh5_ssh_user+"@"+jh5_ip if jh5_ip is defined and jh5_ip!="")+" ssh -q -oPort="+my_port+" -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null" }}
 
+    - name: Show hello `hostname` using the ansible_ssh_common_args set by the role
+      shell: |
+        echo Hello `hostname`
+      vars:
+        ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+
           # 5 hops
           #- --rsh=ssh -o Port={{ jh1_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh1_ssh_user }}@{{ jh1_ip }} ssh -o Port={{ jh2_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh2_ssh_user }}@{{ jh2_ip }} ssh -o Port={{ jh3_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh3_ssh_user }}@{{ jh3_ip }} ssh -o Port={{ jh4_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh4_ssh_user }}@{{ jh4_ip }} ssh -o Port={{ jh5_ssh_port }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A {{ jh5_ssh_user }}@{{ jh5_ip }} ssh -q -oPort={{ my_port }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null
  
