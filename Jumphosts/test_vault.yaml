@@ -2,5 +2,5 @@
 - hosts: all
   gather_facts: no
   tasks:
-    - shell: echo {{ aaa }};echo {{ lookup('hashi_vault','secret=hybrid-grc/ssh-keys/awsprovider/provider1:aws_access_key_id') }}
+    - shell: echo {{ aws_secret_access_key }};echo {{ aws_access_key_id') }}
       register: result
