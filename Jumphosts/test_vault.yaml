@@ -1,0 +1,6 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - shell: echo {{ aaa }};echo lookup('hashivault','secret=hybrid-grc/ssh-keys/awsprovider/provider1:aws_access_key_id')
+      register: result
