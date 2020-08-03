@@ -17,7 +17,7 @@
     #vault_url: http://172.17.0.3:1234
     #proxies: '{"http":"socks5h://localhost:1234","https":"socks5h://localhost:1234"}'
     vault_url: http://aakrhel001.yellowykt.com:1234
-    proxies: '{"http":"socks5h://localhost:1234","https":"socks5h://localhost:1234"}'
+    proxies: '{"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}'
   tasks:
     - set_fact:
         my_ssh_user: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data.ssh_user }}"
