@@ -23,7 +23,6 @@
     - name: Start ssh-agent and Retrieve the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
       shell: |
         #eval $(ssh-agent -s) > /dev/null
-        ps -ef | grep ssh-agent
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
       register: env_vars_stdout
     - set_fact:
@@ -31,6 +30,10 @@
     - name: Print the environment variables
       debug:
         msg: "{{ env_vars }}"
+    - name: Check the ssh-agent
+      shell: |
+        ps -ef | grep ssh-agent
+        true
     - debug:
         msg:
           - "vault_url: {{ vault_url }}"
@@ -71,6 +74,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts-all
   tasks:
