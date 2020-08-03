@@ -4,7 +4,7 @@
   connection: local
   gather_facts: false
   roles:
-    - ansible-role-socks5-tunnel-nopassphrase
+    - ansible-role-socks5-tunnel
 
 - hosts: localhost
   gather_facts: no
