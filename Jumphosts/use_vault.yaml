@@ -11,7 +11,8 @@
   connection: local
   vars:
     token: myroot
-    vault_secret_path: /testkv/data/testsecrets/jumphost/
+    #vault_secret_path: /testkv/data/testsecrets/jumphost/
+    vault_secret_path: /testkv/data/testsecrets/aakrhel001/
     #vault_url: http://ec2-52-201-237-93.compute-1.amazonaws.com:1234
     #proxies: '{}'
     #vault_url: http://172.17.0.3:1234
