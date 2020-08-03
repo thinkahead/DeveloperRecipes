@@ -23,6 +23,7 @@
     - name: Start ssh-agent and Retrieve the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
       shell: |
         #eval $(ssh-agent -s) > /dev/null
+        ps -ef | grep ssh-agent
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
       register: env_vars_stdout
     - set_fact:
@@ -63,6 +64,7 @@
         endpoint_ssh_port: "{{ ansible_port if ansible_port is defined else 22 }}"
     - name: Show the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
       shell: |
+        ps -ef | grep ssh-agent
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
 
 - name: add ssh key
@@ -74,6 +76,7 @@
   tasks:
     - name: Show the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
       shell: |
+        ps -ef | grep ssh-agent
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
 
 - hosts: all
