@@ -26,13 +26,13 @@
           - "vault_secret_path: {{ vault_secret_path }}"
     - debug:
         msg:
-          - my_ssh_user: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data.ssh_user }}"
-          - my_ssh_passphrase: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
-          - my_ssh_private_key_data: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
+          - my_ssh_user: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data.ssh_user }}"
+          - my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
+          - my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
     - set_fact:
-        my_ssh_user: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data.ssh_user }}"
-        my_ssh_passphrase: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
-        my_ssh_private_key_data: "{{ lookup('hashi_vault', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
+        my_ssh_user: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data.ssh_user }}"
+        my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
+        my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
     - debug:
         msg:
           - "my_ssh_user: {{ my_ssh_user }}"
