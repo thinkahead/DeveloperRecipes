@@ -15,10 +15,10 @@
     #vault_url: http://ec2-52-201-237-93.compute-1.amazonaws.com:1234
     #proxies: '{}'
     #vault_url: http://172.17.0.3:1234
-    proxies: '{"http":"socks5h://localhost:1234","https":"socks5h://localhost:1234"}'
+    #proxies: '{"http":"socks5h://localhost:1234","https":"socks5h://localhost:1234"}'
     #proxies: '{"http":"socks5h://unixsocket/tmp/mysock.sock","https":"socks5h://unixsocket/tmp/mysock.sock"}'
     vault_url: http://aakrhel001.yellowykt.com:1234
-    #proxies: '{"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}'
+    proxies: '{{ "{ \"http\":\""+(jh1_socks_port if jh1_socks_port is defined else jh_socks_port)+"\",\"https\":\""+(jh1_socks_port if jh1_socks_port is defined else jh_socks_port)+"\"}" }}'
   tasks:
     - debug:
         msg:
@@ -44,4 +44,34 @@
       file:
         path: /tmp/my_ssh_private_key_file
         mode: '0600'
+    - set_fact:
+        - endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
+        - endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
+        - endpoint_ssh_user: "{{ my_ssh_user }}"
+        - endpoint_ssh_port: "{{ ansible_port if ansible_port is defined else 22 }}"
 
+- name: add ssh key
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-ssh-add-jumphosts-all
+
+- hosts: all
+  gather_facts: no
+  vars:
+    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
+    endpoint_ssh_private_key: "{{ hostvars['127.0.0.1']['endpoint_ssh_private_key'] }}"
+    endpoint_ssh_user: "{{ hostvars['127.0.0.1']['endpoint_ssh_user'] }}"
+    endpoint_ssh_port: "{{ hostvars['127.0.0.1']['endpoint_ssh_port'] }}"
+  tasks:
+    - include_vars:
+        file: include_endpointcred.yaml
+      when:
+        - endpoint_ssh_private_key is defined and endpoint_ssh_private_key!=''
+        - endpoint_ssh_user is defined and endpoint_ssh_user!=''
+        - endpoint_ssh_port is defined and endpoint_ssh_port!=''
+    - shell: echo Hello `hostname`
+      register: result
+    - debug:
+        msg: "{{ result }}"
