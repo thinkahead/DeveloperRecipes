@@ -20,6 +20,16 @@
     vault_url: http://aakrhel001.yellowykt.com:1234
     proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https:":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
   tasks:
+    - name: Start ssh-agent and Retrieve the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
+      shell: |
+        #eval $(ssh-agent -s) > /dev/null
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
+      register: env_vars_stdout
+    - set_fact:
+        env_vars: "{{ env_vars_stdout.stdout }}"
+    - name: Print the environment variables
+      debug:
+        msg: "{{ env_vars }}"
     - debug:
         msg:
           - "vault_url: {{ vault_url }}"
@@ -51,6 +61,9 @@
         endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
         endpoint_ssh_user: "{{ my_ssh_user }}"
         endpoint_ssh_port: "{{ ansible_port if ansible_port is defined else 22 }}"
+    - name: Show the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
+      shell: |
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
 
 - name: add ssh key
   hosts: localhost
@@ -58,6 +71,10 @@
   gather_facts: false
   roles:
     - ansible-role-ssh-add-jumphosts-all
+  tasks:
+    - name: Show the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
+      shell: |
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
 
 - hosts: all
   gather_facts: no
