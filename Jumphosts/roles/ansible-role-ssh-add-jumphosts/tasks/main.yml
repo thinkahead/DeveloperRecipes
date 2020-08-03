@@ -10,8 +10,7 @@
   shell: |
     export endpoint_ssh_private_key="{{ endpoint_ssh_private_key if (endpoint_ssh_private_key is defined and endpoint_ssh_private_key!='') else 'undefined-endpoint_ssh_private_key' }}"
     export endpoint_ssh_private_key_passphrase="{{ endpoint_ssh_private_key_passphrase }}"
-    echo Debug in main.yml $endpoint_ssh_private_key $endpoint_ssh_private_key_passphrase
-            
+
     export jh5_ssh_private_key="{{ jh5_ssh_private_key if (jh5_ssh_private_key is defined and jh5_ssh_private_key!='') else 'undefined-jh5_ssh_private_key' }}"
     export jh5_ssh_private_key_passphrase="{{ jh5_ssh_private_key_passphrase }}"
     export jh5_ip="{{ jh5_ip if jh5_ip is defined else '' }}"
@@ -59,6 +58,8 @@
     ./login_with_expect.sh # provides passphrase where required by spawning ./jumphostlogin.sh to establish the tunnel
     #cd "${olddir}"
     ssh-add -l
+    ps -ef | grep ssh-agent
+    true
 
 - name: 0 jumphosts
   set_fact:
