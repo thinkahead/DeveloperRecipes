@@ -9,9 +9,11 @@
     - set_fact:
         hostnames: "{{ [] }}"
       delegate_to: localhost
+      delegate_facts: true
     - set_fact:
         hostnames: "{{ hostnames + [inventory_hostname] }}"
       delegate_to: localhost
+      delegate_facts: true
 
 - hosts: localhost
   gather_facts: no
