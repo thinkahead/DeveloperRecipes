@@ -13,31 +13,6 @@ expect {
             send -- "$env(endpoint_ssh_private_key_passphrase)\r"
             exp_continue
       }
-      "*Enter passphrase for *$env(jh1_ssh_private_key):*" {
-            #puts $env(jh1_ssh_private_key_passphrase)
-            send -- "$env(jh1_ssh_private_key_passphrase)\r"
-            exp_continue
-      }
-      "*Enter passphrase for *$env(jh2_ssh_private_key):*" {
-            #puts $env(jh2_ssh_private_key_passphrase)
-            send -- "$env(jh2_ssh_private_key_passphrase)\r"
-            exp_continue
-      }
-      "*Enter passphrase for *$env(jh3_ssh_private_key):*" {
-            #puts $env(jh3_ssh_private_key_passphrase)
-            send -- "$env(jh3_ssh_private_key_passphrase)\r"
-            exp_continue
-      }
-      "*Enter passphrase for *$env(jh4_ssh_private_key):*" {
-            #puts $env(jh4_ssh_private_key_passphrase)
-            send -- "$env(jh4_ssh_private_key_passphrase)\r"
-            exp_continue
-      }
-      "*Enter passphrase for *$env(jh5_ssh_private_key):*" {
-            #puts $env(jh5_ssh_private_key_passphrase)
-            send -- "$env(jh5_ssh_private_key_passphrase)\r"
-            exp_continue
-      }
       "*DONEDONEDONE*" {
         send_user "spawned process backgrounding successful\n"
         #expect_background
