@@ -31,12 +31,15 @@
     #  debug:
     #    msg:  "{{ hostnames }}"
     - shell: |
-        cat {{ tempfile.path }}
+        cat {{ tempfile }}
+      register: inventory_hosts_old
     - set_fact:
         inventory_hosts: "{{ (inventory_hosts|default([])) + [ item ] }}"
       with_lines: cat {{ tempfile }}
     - debug:
-        msg: "{{ inventory_hosts }}"
+        msg:
+          - "{{ inventory_hosts_old.stdout_lines }}"
+          - "{{ inventory_hosts }}"
 
 - hosts: localhost
   gather_facts: no
