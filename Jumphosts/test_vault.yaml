@@ -4,12 +4,14 @@
   tasks:
     - set_fact:
         host_list: "{{ groups['all'] }}"
-    - debug:
-        msg:  "{{host_list}}"
+      run_once: true
+      delegate_to: localhost
 
 - hosts: all
   gather_facts: no
   tasks:
+    - debug:
+        msg:  "{{host_list}}"
     - set_fact:
         hostnames: "{{ [] }}"
     - set_fact:
