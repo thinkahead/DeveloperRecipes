@@ -11,7 +11,7 @@
       delegate_to: localhost
       delegate_facts: true
     - set_fact:
-        hostnames: "{{ hostnames + [inventory_hostname] }}"
+        hostnames: "{{ hostvars['127.0.0.1']['hostnames'] + [inventory_hostname] }}"
       delegate_to: localhost
       delegate_facts: true
 
