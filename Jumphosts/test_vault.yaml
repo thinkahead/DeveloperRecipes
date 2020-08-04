@@ -1,9 +1,17 @@
 ---
 - hosts: all
+  gather_facts: false
+  tasks:
+    - set_fact:
+        host_list: "{{ groups['all'] }}"
+    - debug:
+        msg:  "{{host_list}}"
+
+- hosts: all
   gather_facts: no
   tasks:
     - set_fact:
         hostnames: "{{ [] }}"
     - set_fact:
-        hostnames: "{{ hostnames + [ansible_host] }}"
+        hostnames: "{{ hostnames + [inventory_hostname] }}"
       delegate_to: localhost
