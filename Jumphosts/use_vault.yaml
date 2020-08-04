@@ -78,8 +78,10 @@
     #      - "vault_secret_path: {{ vault_secret_path }}"
     - set_fact:
         proxies_str: "{{ proxies | to_json | replace(' ','') | string }}"
-    - include_tasks: use_vault_include.yaml myhostname={{ item }} vault_secret_path={{ vault_secret_path }} token={{ token }} vault_url={{ vault_url }}
+    - include_tasks: use_vault_include.yaml # myhostname={{ item }} vault_secret_path={{ vault_secret_path }} token={{ token }} vault_url={{ vault_url }}
       with_items: "{{ inventory_hosts }}"
+      loop_control:
+        loop_var: myhostname
     - set_fact:
         endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
         endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
