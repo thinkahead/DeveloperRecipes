@@ -1,25 +1,48 @@
 ---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: create temporary file
+      tempfile:
+        state: file
+        suffix: temp
+      register: tempfile
+    - set_fact:
+        tempfile: "{{ tempfile.path }}"
+
 - hosts: all
   gather_facts: false
   serial: 1
   tasks:
+    - lineinfile: dest="{{ hostvars['127.0.0.1']['tempfile'] }}" line="{{ inventory_hostname }}" state=present create=yes
+      delegate_to: localhost
     #- set_fact:
-    #    host_list: "{{ groups['all'] }}"
-    #  run_once: true
+    #    hostnames: "{{ (hostvars['127.0.0.1']['hostnames']|default([])) + [inventory_hostname] }}"
     #  delegate_to: localhost
-    - lineinfile: dest=/tmp/alexeihosts line="{{ inventory_hostname }}" state=present create=yes
-      delegate_to: localhost
-    - set_fact:
-        hostnames: "{{ (hostvars['127.0.0.1']['hostnames']|default([])) + [inventory_hostname] }}"
-      delegate_to: localhost
-      delegate_facts: true
+    #  delegate_facts: true
 
 - hosts: localhost
   gather_facts: no
   tasks:
-    - debug:
+    - name: Will not use groups['all'], want to find those in the LIMIT
+      debug:
         msg:  "{{ groups['all'] }}"
-    - debug:
-        msg:  "{{ hostnames }}"
+    #- name: Only gives the last one, cannot use this
+    #  debug:
+    #    msg:  "{{ hostnames }}"
     - shell: |
-        cat /tmp/alexeihosts
+        cat {{ tempfile.path }}
+    - set_fact:
+        inventory_hosts: "{{ (inventory_hosts|default([])) + [ item ] }}"
+      with_lines: cat {{ tempfile }}
+    - debug:
+        msg: "{{ inventory_hosts }}"
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: use the registered var and the file module to remove the temporary file
+      file:
+        path: "{{ tempfile }}"
+        state: absent
+      when: tempfile is defined
