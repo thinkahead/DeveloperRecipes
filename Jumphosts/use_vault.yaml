@@ -97,6 +97,9 @@
   environment: "{{ hostvars['127.0.0.1']['env_vars'] }}"
   vars:
     ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
+    ansible_user: ec2-user
+    ansible_port: 22
+    ansible_password: dontcare
   tasks:
     - shell: echo Hello `hostname`
       register: result
