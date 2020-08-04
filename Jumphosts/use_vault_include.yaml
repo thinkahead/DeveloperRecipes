@@ -24,4 +24,5 @@
     endpoint_ssh_user: "{{ my_ssh_user }}"
     endpoint_ssh_port: "{{ ansible_port if ansible_port is defined else 22 }}"
 - name: add ssh key
-  include_role: ansible-role-ssh-add-jumphosts-endpoint
+  include_role:
+    name: ansible-role-ssh-add-jumphosts-endpoint
