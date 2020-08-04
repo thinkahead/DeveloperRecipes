@@ -16,4 +16,4 @@
   gather_facts: no
   tasks:
     - debug:
-        msg:  "{{ host_list }}"
+        msg:  "{{ groups['all'] }}"
