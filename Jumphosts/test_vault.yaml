@@ -6,6 +6,8 @@
     #    host_list: "{{ groups['all'] }}"
     #  run_once: true
     #  delegate_to: localhost
+    - lineinfile: dest=/tmp/alexeihosts line="{{ inventory_hostname }}" state=present
+      delegate_to: localhost
     - set_fact:
         hostnames: "{{ (hostvars['127.0.0.1']['hostnames']|default([])) + [inventory_hostname] }}"
       delegate_to: localhost
@@ -18,3 +20,5 @@
         msg:  "{{ groups['all'] }}"
     - debug:
         msg:  "{{ hostnames }}"
+    - shell: |
+        cat /tmp/alexeihosts
