@@ -48,8 +48,7 @@
   connection: local
   vars:
     token: myroot
-    vault_secret_path: /testkv/data/testsecrets/jumphost/
-    #vault_secret_path: /testkv/data/testsecrets/aakrhel001/
+    vault_secret_path: /testkv/data/testsecrets/
     #vault_url: http://ec2-52-201-237-93.compute-1.amazonaws.com:1234
     #proxies: '{}'
     #vault_url: http://172.17.0.3:1234
@@ -79,7 +78,7 @@
     #      - "vault_secret_path: {{ vault_secret_path }}"
     - set_fact:
         proxies_str: "{{ proxies | to_json | replace(' ','') | string }}"
-    - include_tasks: use_vault_include.yaml myhostname={{ ityem }}
+    - include_tasks: use_vault_include.yaml myhostname={{ item }} vault_secret_path={{ vault_secret_path }} token={{ token }} vault_url={{ vault_url }}
       with_items: "{{ inventory_hosts }}"
     - set_fact:
         endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
