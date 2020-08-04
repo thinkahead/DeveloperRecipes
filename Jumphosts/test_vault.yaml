@@ -2,18 +2,21 @@
 - hosts: all
   gather_facts: false
   tasks:
-    - set_fact:
-        host_list: "{{ groups['all'] }}"
-      run_once: true
-      delegate_to: localhost
     #- set_fact:
-    #    hostnames: "{{ [] }}"
-    #- set_fact:
-    #    hostnames: "{{ hostnames + [inventory_hostname] }}"
+    #    host_list: "{{ groups['all'] }}"
+    #  run_once: true
     #  delegate_to: localhost
+    - set_fact:
+        hostnames: "{{ [] }}"
+      delegate_to: localhost
+    - set_fact:
+        hostnames: "{{ hostnames + [inventory_hostname] }}"
+      delegate_to: localhost
 
 - hosts: localhost
   gather_facts: no
   tasks:
     - debug:
         msg:  "{{ groups['all'] }}"
+    - debug:
+        msg:  "{{ hostnames }}"
