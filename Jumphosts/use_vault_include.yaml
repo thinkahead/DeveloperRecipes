@@ -1,0 +1,28 @@
+---
+- debug:
+    msg:
+      - my_ssh_user: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+myhostname+'/'+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_user }}"
+      - my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+myhostname+'/'+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_passphrase | b64decode }}"
+      - my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+myhostname+'/'+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_private_key | b64decode }}"
+- set_fact:
+    my_ssh_user: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }}{{ myhostname }}/ token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data.ssh_user }}"
+    my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }}{{ myhostname }}/ token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
+    my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }}{{ myhostname }}/ token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
+- debug:
+    msg:
+      - "my_ssh_user: {{ my_ssh_user }}"
+      - "my_ssh_passphrase: {{ my_ssh_passphrase }}"
+      - "my_ssh_private_key_data: {{ my_ssh_private_key_data }}"
+- copy: content="{{ my_ssh_private_key_data }}" dest=/tmp/my_ssh_private_key_file
+- name: Change file ownership, group and permissions
+  file:
+    path: /tmp/my_ssh_private_key_file
+    mode: '0600'
+- set_fact:
+    endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
+    endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
+    endpoint_ssh_user: "{{ my_ssh_user }}"
+    endpoint_ssh_port: "{{ ansible_port if ansible_port is defined else 22 }}"
+- name: add ssh key
+  include_role: ansible-role-ssh-add-jumphosts-endpoint
+  environment: "{{ env_vars }}"

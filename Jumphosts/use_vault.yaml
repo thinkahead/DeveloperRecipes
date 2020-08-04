@@ -1,5 +1,42 @@
 ---
-- name: Role ensures that the socks tunnel is setup
+- name: Create temporary file to collect applicable inventory_hosts
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: create temporary file
+      tempfile:
+        state: file
+        suffix: temp
+      register: tempfile
+    - set_fact:
+        tempfile: "{{ tempfile.path }}"
+
+- name: Collect applicable inventory_hosts with delegate_to
+  hosts: all
+  gather_facts: false
+  serial: 1
+  tasks:
+    - lineinfile: dest="{{ hostvars['127.0.0.1']['tempfile'] }}" line="{{ inventory_hostname }}" state=present create=yes
+      delegate_to: localhost
+
+- name: Delete temporary file after setting inventory_hosts
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Get the inventory_hosts
+      shell: |
+        cat {{ tempfile }}
+      register: inventory_hosts_output
+    - name: Register the inventory_hosts
+      set_fact:
+        inventory_hosts: "{{ inventory_hosts_output.stdout_lines }}"
+    - name: use the registered var and the file module to remove the temporary file
+      file:
+        path: "{{ tempfile }}"
+        state: absent
+      when: tempfile is defined
+
+- name: Role ensures that the socks tunnel is setup for connection to vault
   hosts: localhost
   connection: local
   gather_facts: false
@@ -31,36 +68,19 @@
     - name: Print the environment variables
       debug:
         msg: "{{ env_vars }}"
-    - name: Check the ssh-agent
-      shell: |
-        ps -ef | grep ssh-agent
-        true
-    - debug:
-        msg:
-          - "vault_url: {{ vault_url }}"
-          - "proxies: {{ proxies | to_json | replace(' ','') | string }}"
-          - "vault_secret_path: {{ vault_secret_path }}"
+    #- name: Check the ssh-agent
+    #  shell: |
+    #    ps -ef | grep ssh-agent
+    #    true
+    #- debug:
+    #    msg:
+    #      - "vault_url: {{ vault_url }}"
+    #      - "proxies: {{ proxies | to_json | replace(' ','') | string }}"
+    #      - "vault_secret_path: {{ vault_secret_path }}"
     - set_fact:
         proxies_str: "{{ proxies | to_json | replace(' ','') | string }}"
-    - debug:
-        msg:
-          - my_ssh_user: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_user }}"
-          - my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_passphrase | b64decode }}"
-          - my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_private_key | b64decode }}"
-    - set_fact:
-        my_ssh_user: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data.ssh_user }}"
-        my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
-        my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }} token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
-    - debug:
-        msg:
-          - "my_ssh_user: {{ my_ssh_user }}"
-          - "my_ssh_passphrase: {{ my_ssh_passphrase }}"
-          - "my_ssh_private_key_data: {{ my_ssh_private_key_data }}"
-    - copy: content="{{ my_ssh_private_key_data }}" dest=/tmp/my_ssh_private_key_file
-    - name: Change file ownership, group and permissions
-      file:
-        path: /tmp/my_ssh_private_key_file
-        mode: '0600'
+    - include_tasks: use_vault_include.yaml myhostname={{ ityem }}
+      with_items: "{{ inventory_hosts }}"
     - set_fact:
         endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
         endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
@@ -71,33 +91,9 @@
         ps -ef | grep ssh-agent
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
 
-- name: add ssh key
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  environment: "{{ env_vars }}"
-  roles:
-    - ansible-role-ssh-add-jumphosts-all
-  tasks:
-    - name: Show the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
-      shell: |
-        ps -ef | grep ssh-agent
-        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
-
 - hosts: all
   gather_facts: no
-  vars:
-    ansible_ssh_common_args: "{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}"
-    endpoint_ssh_private_key: "{{ hostvars['127.0.0.1']['endpoint_ssh_private_key'] }}"
-    endpoint_ssh_user: "{{ hostvars['127.0.0.1']['endpoint_ssh_user'] }}"
-    endpoint_ssh_port: "{{ hostvars['127.0.0.1']['endpoint_ssh_port'] }}"
   tasks:
-    - include_vars:
-        file: include_endpointcred.yaml
-      when:
-        - endpoint_ssh_private_key is defined and endpoint_ssh_private_key!=''
-        - endpoint_ssh_user is defined and endpoint_ssh_user!=''
-        - endpoint_ssh_port is defined and endpoint_ssh_port!=''
     - shell: echo Hello `hostname`
       register: result
     - debug:

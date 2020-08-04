@@ -1,0 +1,16 @@
+---
+- shell: |
+    echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
+  register: env_vars_stdout_temp
+  when: env_vars is not defined
+- set_fact:
+    env_vars: "{{ env_vars | default(env_vars_stdout_temp.stdout) }}"
+- name: Adding ssh keys optionally with passphrase to ssh-agent
+  #no_log: true
+  shell: |
+    export endpoint_ssh_private_key="{{ endpoint_ssh_private_key if (endpoint_ssh_private_key is defined and endpoint_ssh_private_key!='') else 'undefined-endpoint_ssh_private_key' }}"
+    export endpoint_ssh_private_key_passphrase="{{ endpoint_ssh_private_key_passphrase }}"
+    cd "{{ role_path if role_path is defined else 'roles' }}/tasks"
+    ./login_with_expect.sh # provides passphrase where required by spawning ./jumphostlogin.sh to establish the tunnel
+    ssh-add -l
+    true
