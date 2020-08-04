@@ -95,6 +95,8 @@
 - hosts: all
   gather_facts: no
   environment: "{{ hostvars['127.0.0.1']['env_vars'] }}"
+  vars:
+    ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
   tasks:
     - shell: echo Hello `hostname`
       register: result
