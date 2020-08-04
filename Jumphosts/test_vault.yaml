@@ -1,12 +1,13 @@
 ---
 - hosts: all
   gather_facts: false
+  serial: 1
   tasks:
     #- set_fact:
     #    host_list: "{{ groups['all'] }}"
     #  run_once: true
     #  delegate_to: localhost
-    - lineinfile: dest=/tmp/alexeihosts line="{{ inventory_hostname }}" state=present
+    - lineinfile: dest=/tmp/alexeihosts line="{{ inventory_hostname }}" state=present create=yes
       delegate_to: localhost
     - set_fact:
         hostnames: "{{ (hostvars['127.0.0.1']['hostnames']|default([])) + [inventory_hostname] }}"
