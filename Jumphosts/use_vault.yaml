@@ -128,7 +128,7 @@
         msg:
           - "ansible_ssh_common_args='{{ ansible_ssh_common_args }}'"
           - "ansible_ssh_common_args_vault='{{ ansible_ssh_common_args2 }}'"
-          - "ansible_ssh_common_args_role='{{ hostvars['127.0.0.1']['ansible_ssh_common_args'] }}'"
+          - "ansible_ssh_common_args_role='{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + hostvars['127.0.0.1']['ansible_ssh_common_args'] }}'"
           - "ansible_port={{ ansible_port }}"
           - "ansible_user={{ ansible_user }}"
     - shell: echo Hello `hostname`
