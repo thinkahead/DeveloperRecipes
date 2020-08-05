@@ -109,6 +109,8 @@
   tasks:
     - set_fact:
         ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + ' ' + (ansible_ssh_common_args|regex_replace('ssh ','ssh '+ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK']+' ')) }}"
+        ansible_port: "{{ ansible_port | default(22) }}"
+        ansible_user: "{{ ansible_user | default('ec2-user') }}"
     - debug:
         msg:
           - "ansible_ssh_common_args='{{ ansible_ssh_common_args }}'"
