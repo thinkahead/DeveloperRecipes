@@ -94,9 +94,12 @@
     - debug:
         msg: "Target host list = {{groups.target_hosts}}"
 
-- hosts: all
+# We can kill the tunnel to retrieve the credentials from Vault now because the ssh keys have been added to the ssh-agent
+
+- name: Run on target hosts using inventory/group/hosts variables
+  hosts: all
   gather_facts: no
-  #environment: "{{ hostvars['127.0.0.1']['env_vars'] }}" # This will not work, it is not on localhost
+  # environment: "{{ hostvars['127.0.0.1']['env_vars'] }}" # This will not work, environment is not set on localhost. We must use the -oIdentityAgent.
   tasks:
     - debug:
         msg: "{{ ansible_ssh_common_args }} {{ ansible_port }} {{ ansible_user }}"
@@ -108,7 +111,8 @@
     - debug:
         msg: "{{ result }}"
 
-- hosts: target_hosts
+- name: Run on target hosts using group variables generated from vault
+  hosts: target_hosts
   gather_facts: no
   tasks:
     - shell: echo Hello `hostname`
