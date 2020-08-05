@@ -110,7 +110,7 @@
   # environment: "{{ hostvars['127.0.0.1']['env_vars'] }}" # This will not work, environment is not set on localhost. We must use the -oIdentityAgent.
   tasks:
     - set_fact:
-        ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + ' ' + (ansible_ssh_common_args|regex_replace('ProxyCommand=ssh','ProxyCommand=ssh '+ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'])) }}"
+        ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + ' ' + (ansible_ssh_common_args|regex_replace('ssh ','ssh '+ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'])+' ') }}"
     - debug:
         msg: "{{ ansible_ssh_common_args }} {{ ansible_port }} {{ ansible_user }}"
     - shell: echo Hello `hostname`
