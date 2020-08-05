@@ -99,8 +99,6 @@
       with_items: "{{ inventory_hosts }}"
       loop_control:
         loop_var: myhostname
-    - debug:
-        msg: "Target host list = {{groups.target_hosts}}"
 
 # We can kill the tunnel to retrieve the credentials from Vault now because the ssh keys have been added to the ssh-agent
 
