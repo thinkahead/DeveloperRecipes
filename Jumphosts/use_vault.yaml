@@ -103,7 +103,8 @@
     - shell: echo Hello `hostname`
       register: result
       vars:
-        ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK']+(' '+ansible_ssh_common_args if ansible_ssh_common_args is defined else '') }}"
+        #ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK']+(' '+ansible_ssh_common_args if ansible_ssh_common_args is defined else '') }}"
+        ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
     - debug:
         msg: "{{ result }}"
 
