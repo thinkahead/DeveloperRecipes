@@ -26,3 +26,15 @@
 - name: add ssh key
   include_role:
     name: ansible-role-ssh-add-jumphosts-endpoint
+- name: Adding to custom group
+  add_host:
+    name:  "{{ myhostname }}"
+    groups: targethosts
+    ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
+    ansible_ssh_user: "{{ endpoint_ssh_user }}"
+    ansible_port: 22
+    ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
+    #ansible_become_pass: "{{ ansible_become_password }}"
+    #ansible_become_user: "{{ ansible_become_user }}"
+    #ansible_become_method: su
+    #ansible_become: True
