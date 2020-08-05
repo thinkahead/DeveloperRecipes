@@ -29,7 +29,7 @@
 - name: Adding to custom group
   add_host:
     name:  "{{ myhostname }}"
-    groups: targethosts
+    groups: target_hosts
     ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
     ansible_ssh_user: "{{ endpoint_ssh_user }}"
     ansible_port: 22
