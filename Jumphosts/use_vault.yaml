@@ -63,6 +63,14 @@
       debug:
         msg: "{{ env_vars }}"
 
+- name: Role ensures that the ssh keys of jumphosts are added to ssh-agent
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  environment: "{{ env_vars }}"
+  roles:
+    - ansible-role-ssh-add-jumphosts-all
+
 - name: Retrieve credentials from vault for selected target hosts and add to ssh-agent
   hosts: localhost
   gather_facts: no
