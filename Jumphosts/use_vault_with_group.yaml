@@ -95,7 +95,7 @@
   tasks:
     - set_fact:
         proxies_str: "{{ proxies | to_json | replace(' ','') | string }}"
-    - include_tasks: use_vault_include.yaml # Uses: proxies_str myhostname vault_secret_path token vault_url
+    - include_tasks: use_vault_with_group_include.yaml # Uses: proxies_str myhostname vault_secret_path token vault_url
       with_items: "{{ inventory_hosts }}"
       loop_control:
         loop_var: myhostname
@@ -104,10 +104,23 @@
 
 # We can kill the tunnel to retrieve the credentials from Vault now because the ssh keys have been added to the ssh-agent
 
-- name: Run on target hosts using inventory/group/hosts variables, does not use the target_hosts group
-  hosts: all
+#- name: Run on target hosts using inventory/group/hosts variables, does not use the target_hosts group
+#  hosts: all
+#  gather_facts: no
+#  # environment: "{{ hostvars['127.0.0.1']['env_vars'] }}" # This will not work, environment is not set on localhost. We must use the -oIdentityAgent.
+#  tasks:
+#    - set_fact:
+#        ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + ' ' + (ansible_ssh_common_args|regex_replace('ssh ','ssh '+ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK']+' ')) }}"
+#    - debug:
+#        msg: "ansible_ssh_common_args='{{ ansible_ssh_common_args }}' ansible_port={{ ansible_port }} ansible_user={{ ansible_user }}"
+#    - shell: echo Hello `hostname`
+#      register: result
+#      #vars:
+#        #ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
+
+- name: Run on target hosts using host variables generated from vault when creating the target_hosts group
+  hosts: target_hosts
   gather_facts: no
-  # environment: "{{ hostvars['127.0.0.1']['env_vars'] }}" # This will not work, environment is not set on localhost. We must use the -oIdentityAgent.
   tasks:
     - set_fact:
         ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + ' ' + (ansible_ssh_common_args|regex_replace('ssh ','ssh '+ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK']+' ')) }}"
@@ -120,21 +133,3 @@
           - "ansible_user={{ ansible_user }}"
     - shell: echo Hello `hostname`
       register: result
-      #vars:
-        #ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
-
-#- name: Run on target hosts using host variables generated from vault when creating the target_hosts group
-#  hosts: target_hosts
-#  gather_facts: no
-#  tasks:
-#    - set_fact:
-#        ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + ' ' + (ansible_ssh_common_args|regex_replace('ssh ','ssh '+ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK']+' ')) }}"
-#    - debug:
-#        msg:
-#          - "ansible_ssh_common_args='{{ ansible_ssh_common_args }}'"
-#          - "ansible_ssh_common_args_vault='{{ ansible_ssh_common_args2 }}'"
-#          - "ansible_ssh_common_args_role='{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] + hostvars['127.0.0.1']['ansible_ssh_common_args'] }}'"
-#          - "ansible_port={{ ansible_port }}"
-#          - "ansible_user={{ ansible_user }}"
-#    - shell: echo Hello `hostname`
-#      register: result

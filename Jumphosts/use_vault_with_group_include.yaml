@@ -1,0 +1,31 @@
+---
+- set_fact:
+    my_ssh_user: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }}{{ myhostname }}/ token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data.ssh_user }}"
+    my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }}{{ myhostname }}/ token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data['ssh_passphrase'] | b64decode }}"
+    my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret={{ vault_secret_path }}{{ myhostname }}/ token={{ token }} url={{ vault_url }} proxies={{ proxies_str }}', errors='ignore').data['ssh_private_key'] | b64decode }}"
+  no_log: yes
+- copy: content="{{ my_ssh_private_key_data }}" dest=/tmp/my_ssh_private_key_file
+- name: Change file ownership, group and permissions
+  file:
+    path: /tmp/my_ssh_private_key_file
+    mode: '0600'
+- name: Set endpoint ssh private key for ading to ssh-agent in ansible-role-ssh-add-jumphosts-endpoint role
+  set_fact:
+    endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
+    endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
+    endpoint_ssh_user: "{{ my_ssh_user }}"
+- name: add ssh key
+  include_role:
+    name: ansible-role-ssh-add-jumphosts-endpoint
+- name: Adding to custom group
+  add_host:
+    name:  "{{ myhostname }}"
+    groups: target_hosts
+    #ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
+    ansible_ssh_user: "{{ endpoint_ssh_user }}"
+    ansible_port: 22
+    ansible_ssh_common_args2: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
+    #ansible_become_pass: "{{ ansible_become_password }}"
+    #ansible_become_user: "{{ ansible_become_user }}"
+    #ansible_become_method: su
+    #ansible_become: True
