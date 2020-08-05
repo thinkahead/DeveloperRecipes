@@ -43,9 +43,18 @@
   roles:
     - ansible-role-socks5-tunnel
   tasks:
+    - name: Check if SSH_AGENT is runnning
+      shell: |
+        ps -ef | grep " $SSH_AGENT_PID " | grep -v grep
+        true
     - name: Start ssh-agent and Retrieve the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
       shell: |
-        eval $(ssh-agent -s) > /dev/null
+        if ps -p $SSH_AGENT_PID > /dev/null
+        then
+            echo -n "" > /dev/null
+        else
+            eval $(ssh-agent -s) > /dev/null
+        fi
         echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
       register: env_vars_stdout
     - set_fact:
