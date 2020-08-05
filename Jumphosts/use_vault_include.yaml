@@ -18,7 +18,8 @@
   file:
     path: /tmp/my_ssh_private_key_file
     mode: '0600'
-- set_fact:
+- name: Set endpoint ssh private key for ading to ssh-agent in ansible-role-ssh-add-jumphosts-endpoint role
+  set_fact:
     endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
     endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
     endpoint_ssh_user: "{{ my_ssh_user }}"
@@ -29,7 +30,7 @@
   add_host:
     name:  "{{ myhostname }}"
     groups: target_hosts
-    ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
+    #ansible_ssh_private_key_file: "{{ endpoint_ssh_private_key }}"
     ansible_ssh_user: "{{ endpoint_ssh_user }}"
     ansible_port: 22
     ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
