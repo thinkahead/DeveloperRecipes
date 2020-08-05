@@ -99,7 +99,7 @@
   #environment: "{{ hostvars['127.0.0.1']['env_vars'] }}" # This will not work, it is not on localhost
   tasks:
     - debug:
-        msg: "{{ ansible_ssh_common_args }}"
+        msg: "{{ ansible_ssh_common_args }} {{ ansible_port }} {{ ansible_user }}"
     - shell: echo Hello `hostname`
       register: result
       vars:
