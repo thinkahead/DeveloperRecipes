@@ -78,35 +78,16 @@
     vault_url: http://aakrhel001.yellowykt.com:1234
     proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https:":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
   tasks:
-    - name: Check the ssh-agent
-      shell: |
-        ps -ef | grep ssh-agent
-        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
-        true
-    #- debug:
-    #    msg:
-    #      - "vault_url: {{ vault_url }}"
-    #      - "proxies: {{ proxies | to_json | replace(' ','') | string }}"
-    #      - "vault_secret_path: {{ vault_secret_path }}"
     - set_fact:
         proxies_str: "{{ proxies | to_json | replace(' ','') | string }}"
-    - include_tasks: use_vault_include.yaml # myhostname={{ item }} vault_secret_path={{ vault_secret_path }} token={{ token }} vault_url={{ vault_url }}
+    - include_tasks: use_vault_include.yaml # Uses: proxies_str myhostname vault_secret_path token vault_url
       with_items: "{{ inventory_hosts }}"
       loop_control:
         loop_var: myhostname
-    - set_fact:
-        endpoint_ssh_private_key: "/tmp/my_ssh_private_key_file"
-        endpoint_ssh_private_key_passphrase: "{{ my_ssh_passphrase }}"
-        endpoint_ssh_user: "{{ my_ssh_user }}"
-        endpoint_ssh_port: "{{ ansible_port if ansible_port is defined else 22 }}"
-    - name: Show the SSH_AUTH_SOCK and SSH_AGENT_PID environment variables
-      shell: |
-        ps -ef | grep ssh-agent
-        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
 
 - hosts: all
   gather_facts: no
-  environment: "{{ hostvars['127.0.0.1']['env_vars'] }}"
+  #environment: "{{ hostvars['127.0.0.1']['env_vars'] }}"
   vars:
     ansible_ssh_common_args: "{{ '-oIdentityAgent='+hostvars['127.0.0.1']['env_vars']['SSH_AUTH_SOCK'] }}"
     ansible_user: ec2-user
