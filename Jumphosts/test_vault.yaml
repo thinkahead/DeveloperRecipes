@@ -1,10 +1,10 @@
 ---
-- name: Role ensures that the ssh keys of jumphosts are added to ssh-agent
+- name: Role ensures that the socks tunnel is setup for connection to vault. This does not use ssh-agent.
   hosts: localhost
   connection: local
   gather_facts: false
   roles:
-    - ansible-role-ssh-add-jumphosts-all
+    - ansible-role-socks5-tunnel
 
 - hosts: localhost
   gather_facts: no
@@ -20,7 +20,7 @@
     - debug:
         msg:
           - "vault_url: {{ vault_url }}"
-          - "proxies: {{ proxies_str }}"
+          - "proxies_str: {{ proxies_str }}"
           - "vault_secret_path: {{ vault_secret_path }}"
     - set_fact:
         my_ssh_user: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_user }}"
