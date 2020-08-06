@@ -3,7 +3,6 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  environment: "{{ env_vars }}"
   roles:
     - ansible-role-ssh-add-jumphosts-all
 
