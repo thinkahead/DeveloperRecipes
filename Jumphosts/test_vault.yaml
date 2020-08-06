@@ -13,7 +13,6 @@
     token: ""
     vault_secret_path: ""
     vault_url: ""
-    jh_socks_port: socks5h://localhost:1234
     proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https:":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
   tasks:
     - set_fact:
