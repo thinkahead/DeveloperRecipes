@@ -1,0 +1,42 @@
+---
+- name: Role ensures that the ssh keys of jumphosts are added to ssh-agent
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  environment: "{{ env_vars }}"
+  roles:
+    - ansible-role-ssh-add-jumphosts-all
+
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  vars:
+    token: ""
+    vault_secret_path: ""
+    vault_url: ""
+    jh_socks_port: socks5h://localhost:1234
+    proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https:":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
+  tasks:
+    - set_fact:
+        proxies_str: '{{ proxies | to_json | replace(" ","") | string }}'
+    - debug:
+        msg:
+          - "vault_url: {{ vault_url }}"
+          - "proxies: {{ proxies_str }}"
+          - "vault_secret_path: {{ vault_secret_path }}"
+    - set_fact:
+        my_ssh_user: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_user }}"
+        my_ssh_passphrase: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_passphrase | b64decode }}"
+        my_ssh_private_key_data: "{{ lookup('hashi_vault2', 'secret='+vault_secret_path+' token='+token+' url='+vault_url+' proxies='+proxies_str, errors='ignore').data.ssh_private_key | b64decode }}"
+    - name: Show the credentials retrieved from vault
+      debug:
+        msg:
+          - "my_ssh_user: {{ my_ssh_user }}"
+          - "my_ssh_passphrase: {{ my_ssh_passphrase }}"
+          - "my_ssh_private_key_data: {{ my_ssh_private_key_data }}"
+    - copy: content="{{ my_ssh_private_key_data }}" dest=/tmp/my_ssh_private_key_file
+    - name: Change file ownership, group and permissions
+      file:
+        path: /tmp/my_ssh_private_key_file
+        mode: '0600'
+
