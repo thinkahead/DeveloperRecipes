@@ -23,11 +23,16 @@
           - "vault_url: {{ vault_url }}"
           - "vault_secret_path: {{ vault_secret_path }}"
 
-    # Retrieve the token and use it to retrieve the credentials for all target_hosts
-    - shell: curl -d "{{ api_key }}" --proxy socks5h://localhost:1234 -k {{ vault_url }}{{ auth_secret_path }} 2>/dev/null | base64 | tr -d '\r\n'
+    - name: Retrieve the token and use it to retrieve the credentials for all target_hosts
+      #shell: curl -s -d "{{ api_key }}" --proxy {{ proxy }} -k {{ vault_url }}{{ auth_secret_path }} 2>/dev/null | base64 | tr -d '\r\n'
+      shell: curl -s -d "{{ api_key }}" --proxy {{ proxy }} -k {{ vault_url }}{{ auth_secret_path }} | base64 | tr -d '\r\n'
       register: token_output
+    - fail:
+        msg: Count not retrieve token from {{ auth_secret_path }}
+      when: token_output.stdout|length == 0
     - set_fact: token="{{ token_output.stdout }}"
-    - shell: |
+    - name: Retrieve the credentials
+      shell: |
         my_ssh_user=`curl --proxy {{ proxy }} -s -k -H "Content-Type: text/plain" -H "Authorization: Token token=\"{{ token }}\"" {{ vault_url }}{{ vault_secret_path }}testsecrets-{{ target_host }}-ssh_user 2>/dev/null`
         my_ssh_passphrase=`curl --proxy {{ proxy }} -s -k -H "Content-Type: text/plain" -H "Authorization: Token token=\"{{ token }}\"" {{ vault_url }}{{ vault_secret_path }}testsecrets-{{ target_host }}-ssh_passphrase 2>/dev/null | base64 -d`
         my_ssh_private_key=`curl --proxy {{ proxy }} -s -k -H "Content-Type: text/plain" -H "Authorization: Token token=\"{{ token }}\"" {{ vault_url }}{{ vault_secret_path }}testsecrets-{{ target_host }}-ssh_private_key 2>/dev/null | base64 -d`
@@ -49,8 +54,6 @@
     #  register: response
     - debug:
         msg: "{{ response.results }}"
-    #- set_fact:
-    #    creds: "{{ response.results | json_query('[*].stdout[]') | flatten }}"
     - set_fact:
         creds: "{{ {} }}"
     - set_fact:
