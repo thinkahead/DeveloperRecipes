@@ -73,5 +73,5 @@
         msg: "{{ creds }}"
     - debug:
         msg: "{{ item.key }}: {{ item.value }}"
-      with_dict: "{{ creds | from_json }}"
+      with_dict: "{{ creds }}"
 
