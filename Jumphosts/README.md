@@ -22,3 +22,9 @@ Multiple Jumphosts in Ansible Tower - Part 4: Multi jumphost connections to Linu
 Multiple Jumphosts in Ansible Tower – Part 5: Unix domain socket file instead of socks port https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-5/
 
 Multiple Jumphosts in Ansible Tower – Part 6: Primary and Secondary/Backup Jumphosts and Reverse ssh Tunnel https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-6/
+
+Multiple Jumphosts in Ansible Tower – Part 7: Failover using redundant jumphosts, tweaking ssh parameters and memory requirements for jumphosts https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-7/
+
+Multiple Jumphosts in Ansible Tower – Part 8: Transferring files using ansible synchronize module and rsync https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-8/
+
+Multiple Jumphosts in Ansible Tower – Part 9: Pull secrets from remote 3rd-party vaults over multiple jumphost hops https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-9/
