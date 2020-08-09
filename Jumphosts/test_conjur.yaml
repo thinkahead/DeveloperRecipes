@@ -70,16 +70,6 @@
         creds: "{{ creds | combine(item|from_json) }}"
       with_items: "{{ response.results | json_query('[*].stdout[]') }}"
     - debug:
-        msg: "{{ creds['aakrhel001'] }}"
-    #- name: Show the credentials retrieved from vault
-    #  debug:
-    #    msg:
-    #      - "my_ssh_user: {{ my_ssh_user }}"
-    #      - "my_ssh_passphrase: {{ my_ssh_passphrase }}"
-    #      - "my_ssh_private_key_data: {{ my_ssh_private_key_data }}"
-    #- copy: content="{{ my_ssh_private_key_data }}" dest=/tmp/my_ssh_private_key_file
-    #- name: Change file ownership, group and permissions
-    #  file:
-    #    path: /tmp/my_ssh_private_key_file
-    #    mode: '0600'
+        msg: ""{{item.key}}: {{item.value}}""
+      with_dict: creds
 
