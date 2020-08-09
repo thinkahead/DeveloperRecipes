@@ -80,7 +80,7 @@
     token: ""
     vault_secret_path: ""
     vault_url: ""
-    proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https:":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
+    proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
   tasks:
     - set_fact:
         proxies_str: "{{ proxies | to_json | replace(' ','') | string }}"
