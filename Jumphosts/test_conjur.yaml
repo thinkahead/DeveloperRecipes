@@ -6,6 +6,16 @@
   roles:
     - ansible-role-socks5-tunnel
 
+- name: Collect applicable inventory_hosts with delegate_to method 1
+  hosts: all
+  gather_facts: false
+  tasks:
+    - set_fact:
+        target_hosts: "{{ ansible_play_hosts_all }}"
+      delegate_to: localhost
+      delegate_facts: true
+      run_once: true
+
 - hosts: localhost
   gather_facts: no
   connection: local
@@ -16,7 +26,7 @@
     vault_secret_path: "/secrets/myConjurAccount/variable/{{ app_id }}%2F"
     vault_url: "https://aakrhel001.yellowykt.com:8443"
     proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"
-    target_hosts: ["aakrhel001","aakrhel002","testaws-001","testaws-002","testaws-003"]
+    #target_hosts: ["aakrhel001","aakrhel002","testaws-001","testaws-002","testaws-003"]
   tasks:
     - debug:
         msg:
