@@ -28,18 +28,16 @@
     proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"
     #target_hosts: ["aakrhel001","aakrhel002","testaws-001","testaws-002","testaws-003"]
   tasks:
-    - debug:
-        msg:
-          - "vault_url: {{ vault_url }}"
-          - "vault_secret_path: {{ vault_secret_path }}"
     - name: Retrieve the token
       uri:
-        url: {{ vault_url }}{{ auth_secret_path }}
+        url: "{{ vault_url }}{{ auth_secret_path }}"
         method: POST
         body: "{{ api_key }}"
         return_content: yes
         socks5_proxy: "{{ proxy }}"
       register: result
+    - debug:
+        msg: "{{ result }}"
 
 
 
