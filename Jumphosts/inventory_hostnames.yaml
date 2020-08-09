@@ -33,18 +33,21 @@
   hosts: localhost
   gather_facts: no
   tasks:
-    - debug:
+    - name: method 1
+      debug:
         msg: "{{ all_inventory_hosts }}"
-    - name: Get the inventory_hosts
-      shell: |
-        cat {{ tempfile }}
-      register: inventory_hosts_output
-    - name: Register the inventory_hosts
-      set_fact:
-        inventory_hosts: "{{ inventory_hosts_output.stdout_lines }}"
-    - name: use the registered var and the file module to remove the temporary file
-      file:
-        path: "{{ tempfile }}"
-        state: absent
+    - name: method 2
+      block:
+        - name: Get the inventory_hosts
+          shell: |
+            cat {{ tempfile }}
+          register: inventory_hosts_output
+        - name: Register the inventory_hosts
+          set_fact:
+            inventory_hosts: "{{ inventory_hosts_output.stdout_lines }}"
+        - name: use the registered var and the file module to remove the temporary file
+          file:
+            path: "{{ tempfile }}"
+            state: absent
       when: tempfile is defined
 
