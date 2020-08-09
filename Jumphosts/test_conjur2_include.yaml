@@ -1,0 +1,9 @@
+- get_conjur_variables:
+    url: "{{ vault_url }}{{ vault_secret_path }}testsecrets-{{ myhost }}-"
+    attributes: "{{ myattributes }}"
+    token: "{{ token }}"
+    proxies: '{{ proxies }}'
+    verify: false
+  register: response
+- set_fact:
+    all_results: "{{ all_results|default({}) | combine({myhost:response.result}) }}"

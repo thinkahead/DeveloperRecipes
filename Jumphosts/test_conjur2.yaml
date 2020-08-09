@@ -25,20 +25,36 @@
     auth_secret_path: "/authn/myConjurAccount/admin/authenticate"
     vault_secret_path: "/secrets/myConjurAccount/variable/{{ app_id }}%2F"
     vault_url: "https://aakrhel001.yellowykt.com:8443"
-    proxy: "{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"
+    proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
     #target_hosts: ["aakrhel001","aakrhel002","testaws-001","testaws-002","testaws-003"]
+    #target_hosts: ["aakrhel001","aakrhel002"]
   tasks:
+    - set_fact:
+        proxies_str: '{{ proxies | to_json | replace(" ","") | string }}'
     - name: Retrieve the token
-      uri:
+      get_conjur_token:
         url: "{{ vault_url }}{{ auth_secret_path }}"
-        method: POST
-        body: "{{ api_key }}"
-        return_content: yes
-        socks5_proxy: "{{ proxy }}"
+        data: "{{ api_key }}"
+        proxies: '{{ proxies }}'
+        verify: false
       register: result
+    - set_fact:
+        token: "{{ result.content | b64encode }}"
+      when: result.status_code==200
+    #- name: Retrieve the credentials
+    #  get_conjur_variable:
+    #    url: "{{ vault_url }}{{ vault_secret_path }}testsecrets-testaws-003-ssh_user"
+    #    token: "{{ result.content | b64encode }}"
+    #    proxies: '{{ proxies }}'
+    #    verify: false
+    #  register: result
+    #- debug:
+    #    msg: "{{ result.content }}"
+    #  when: result.status_code==200
+    - name: Retrieve the credentials
+      include: test_conjur2_include.yaml myhost={{ target_host }} myattributes=['ssh_passphrase','ssh_user','ssh_private_key']
+      with_items: "{{ target_hosts }}"
+      loop_control:
+        loop_var: target_host
     - debug:
-        msg: "{{ result }}"
-
-
-
-
+        msg: "{{ all_results }}"
