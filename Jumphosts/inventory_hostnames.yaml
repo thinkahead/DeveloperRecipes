@@ -18,6 +18,10 @@
   tasks:
     - lineinfile: dest="{{ hostvars['127.0.0.1']['tempfile'] }}" line="{{ inventory_hostname }}" state=present create=yes
       delegate_to: localhost
+    - debug:
+        msg:
+          - "{{ ansible_play_hosts }}"
+          - "{{ ansible_play_hosts_all }}"
 
 - name: Delete temporary file after setting inventory_hosts
   hosts: localhost
