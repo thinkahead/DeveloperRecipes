@@ -11,7 +11,17 @@
     - set_fact:
         tempfile: "{{ tempfile.path }}"
 
-- name: Collect applicable inventory_hosts with delegate_to
+- name: Collect applicable inventory_hosts with delegate_to method 1
+  hosts: all
+  gather_facts: false
+  tasks:
+    - set_fact:
+        all_inventory_hosts: "{{ ansible_play_hosts_all }}"
+      delegate_to: localhost
+      delegate_facts: true
+      run_once: true
+
+- name: Collect applicable inventory_hosts with delegate_to method 2
   hosts: all
   gather_facts: false
   serial: 1
@@ -21,6 +31,7 @@
     - set_fact:
         all_inventory_hosts: "{{ ansible_play_hosts_all }}"
       delegate_to: localhost
+      delegate_facts: true
       run_once: true
 
 - name: Delete temporary file after setting inventory_hosts
