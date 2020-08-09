@@ -70,6 +70,6 @@
         creds: "{{ creds | combine(item|from_json) }}"
       with_items: "{{ response.results | json_query('[*].stdout[]') }}"
     - debug:
-        msg: ""{{item.key}}: {{item.value}}""
+        msg: "{{item.key}}: {{item.value}}"
       with_dict: creds
 
