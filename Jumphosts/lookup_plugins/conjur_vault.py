@@ -30,7 +30,7 @@ DOCUMENTATION = """
 
 EXAMPLES = """
 - debug:
-    msg: "{{ lookup('conjur_vault', 'secret=secret/hello:value token=c975b780-d1be-8016-866b-01d0f9b688a5 url=http://myvault:8200')}}"
+    msg: "{{ lookup('conjur_vault','url=' ~ vault_url ~ vault_secret_path ~ 'testsecrets-aakrhel001 token=' ~ token ~ ' proxies=' ~ proxies_str ~ ' verify=False') }}"
 
 """
 
