@@ -58,7 +58,7 @@ class LookupModule(LookupBase):
             try:
                 key, value = param.split('=')
             except ValueError:
-                raise AnsibleError("conjur_vault lookup plugin needs key=value pairs, but received %s" % terms)
+                raise AnsibleError("conjur_vault lookup plugin needs key=value pairs, but received %s" % param)
             vault_dict[key] = value
 
         url = vault_dict['url']
