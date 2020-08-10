@@ -19,6 +19,7 @@ DOCUMENTATION = """
       default: ['ssh_user','ssh_passphrase','ssh_private_key']
     proxies:
       description: Socks proxies.
+      default: proxies={"http":"socks5h://localhost:1234","https":"socks5h://localhost:1234"}
     url:
       description: URL to vault service.
     verify:
@@ -66,7 +67,8 @@ class LookupModule(LookupBase):
         else: target_hosts=None
         if vault_dict.get('attributes'): attributes  = json.loads(vault_dict['attributes'])
         else: attributes = ['ssh_user','ssh_passphrase','ssh_private_key']
-        proxies = json.loads(vault_dict['proxies'])
+        if vault_dict.get('proxies'): proxies = json.loads(vault_dict['proxies'])
+        else: proxies={"http":"socks5h://localhost:1234","https":"socks5h://localhost:1234"}
         verify=vault_dict.get('verify',True)
         if target_hosts is None or len(target_hosts)==0:
             result={}
