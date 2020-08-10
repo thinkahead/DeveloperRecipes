@@ -1,0 +1,60 @@
+---
+- name: Role ensures that the socks tunnel is setup for connection to vault. This does not use ssh-agent.
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ansible-role-socks5-tunnel
+
+- name: Collect applicable inventory_hosts with delegate_to method 1
+  hosts: all
+  gather_facts: false
+  tasks:
+    - set_fact:
+        target_hosts: "{{ ansible_play_hosts_all }}"
+      delegate_to: localhost
+      delegate_facts: true
+      run_once: true
+
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  vars:
+    api_key: ""
+    app_id: BotApp
+    auth_secret_path: "/authn/myConjurAccount/admin/authenticate"
+    vault_secret_path: "/secrets/myConjurAccount/variable/{{ app_id }}%2F"
+    vault_url: "https://aakrhel001.yellowykt.com:8443"
+    proxies: {"http":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}","https":"{{ jh1_socks_port if jh1_socks_port is defined else jh_socks_port }}"}
+    #target_hosts: ["aakrhel001","aakrhel002","testaws-001","testaws-002","testaws-003"]
+    attributes: ["ssh_user","ssh_passphrase","ssh_private_key"]
+  tasks:
+    - set_fact:
+        proxies_str: '{{ proxies | to_json | replace(" ","") | string }}'
+        attributes_str: '{{ attributes | to_json | replace(" ","") | string }}'
+        target_hosts_str: '{{ target_hosts | to_json | replace(" ","") | string }}'
+    - name: Retrieve the token
+      get_conjur_token:
+        url: "{{ vault_url }}{{ auth_secret_path }}"
+        data: "{{ api_key }}"
+        proxies: "{{ proxies }}"
+        verify: false
+      register: result
+    - set_fact:
+        token: "{{ result.content | b64encode }}"
+      when: result.status_code==200
+
+    - name: Retrieve the credentials for single hostname with no target_hosts and no attributes
+      debug:
+        msg: "{{ lookup('conjur_vault','url='+vault_url+vault_secret_path+'testsecrets-aakrhel001 token='+token+' proxies='+proxies_str+' verify=False') }}"
+
+    - name: Retrieve the credentials for single hostname with empty target_hosts list
+      set_fact:
+        creds_for_aakrhel001: "{{ lookup('conjur_vault','url='+vault_url+vault_secret_path+'testsecrets-aakrhel001 target_hosts=[] attributes='+attributes_str+' token='+token+' proxies='+proxies_str+' verify=False') }}"
+    - debug:
+        msg: "{{ creds_for_aakrhel001[0][item] }}"
+      with_items: "{{ attributes }}"
+
+    - name: Retrieve the credentials
+      debug:
+        msg: "{{ lookup('conjur_vault','url='+vault_url+vault_secret_path+'testsecrets target_hosts='+target_hosts_str+' attributes='+attributes_str+' token='+token+' proxies='+proxies_str+' verify=False') }}"
