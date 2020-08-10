@@ -46,7 +46,7 @@
 
     - name: Retrieve the credentials for single hostname with no target_hosts and no attributes
       debug:
-        msg: "{{ lookup('conjur_vault','url=' ~ vault_url ~ vault_secret_path ~ 'testsecrets-aakrhel001 token=' ~ token ~ ' proxies=' ~ proxies_str ~ ' verify=False') }}"
+        msg: "{# Using ~ instead of + #}{{ lookup('conjur_vault','url=' ~ vault_url ~ vault_secret_path ~ 'testsecrets-aakrhel001 token=' ~ token ~ ' proxies=' ~ proxies_str ~ ' verify=False') }}"
 
     - name: Retrieve the credentials for single hostname with empty target_hosts list
       set_fact:
