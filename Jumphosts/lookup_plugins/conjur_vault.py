@@ -74,14 +74,14 @@ class LookupModule(LookupBase):
             result={}
             for attribute in attributes:
                 result[attribute]=requests.get(url+"-"+attribute, proxies=proxies, verify=False, headers={"Authorization": "Token token=\""+token+"\""}).content
-            ret.append(result)
+            ret.append(json.dumps(result))
         else:
             results={}
             for target_host in target_hosts:
                 result={}
                 for attribute in attributes:
                     result[attribute]=requests.get(url+"-"+target_host+"-"+attribute, proxies=proxies, verify=False, headers={"Authorization": "Token token=\""+token+"\""}).content
-                results[target_host]=result
+                results[target_host]=json.dumps(result)
             ret.append(results)
         ret.append(url)
         ret.append(target_hosts)
