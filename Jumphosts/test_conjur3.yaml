@@ -50,7 +50,7 @@
 
     - name: Retrieve the credentials for single hostname with empty target_hosts list
       set_fact:
-        creds_for_aakrhel001: "{{ lookup('conjur_vault','url='+vault_url+vault_secret_path+'testsecrets-aakrhel001 target_hosts=[] attributes='+attributes_str+' token='+token+' proxies='+proxies_str+' verify=False') }}"
+        creds_for_aakrhel001: "{{ lookup('conjur_vault','url='+vault_url+vault_secret_path+'testsecrets-aakrhel001 target_hosts=[] attributes='+attributes_str+' token='+token+' proxies='+proxies_str+' verify=False'|string) }}"
     - debug:
         msg: "{{ creds_for_aakrhel001[0][item] }}"
       with_items: "{{ attributes }}"
