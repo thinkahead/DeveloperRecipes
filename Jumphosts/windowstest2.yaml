@@ -3,7 +3,7 @@
   connection: local
   gather_facts: false
   tasks:
-    - shell:
+    - shell: |
         echo Looking for ssh-agent
         ps -ef | grep ssh-agent | grep -v grep
         echo Looking for ssh-agent
