@@ -4,6 +4,10 @@
   gather_facts: false
   tasks:
     - shell: |
+        hostname
+        whoami
+        curl ifconfig.me
+        pwd
         echo Looking for ssh-agent
         ps -ef | grep ssh-agent | grep -v grep
         echo Looking for ssh
