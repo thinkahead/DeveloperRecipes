@@ -4,16 +4,17 @@
   gather_facts: false
   tasks:
     - shell: |
-        hostname
         whoami
         curl ifconfig.me
         pwd
-        echo Looking for ssh-agent
-        ps -ef | grep ssh-agent | grep -v grep
-        echo Looking for ssh
-        ps -ef | grep ssh | grep -v ssh-agent | grep -v grep
-        ls -las /root/keys/runme.sh
-        /root/keys/runme.sh
+        ps -ef
+        ls -las /root
+        #echo Looking for ssh-agent
+        #ps -ef | grep ssh-agent | grep -v grep
+        #echo Looking for ssh
+        #ps -ef | grep ssh | grep -v ssh-agent | grep -v grep
+        #ls -las /root/keys/runme.sh
+        #/root/keys/runme.sh
 
 - hosts: all
   gather_facts: no
