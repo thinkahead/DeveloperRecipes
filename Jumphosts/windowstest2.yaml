@@ -13,6 +13,7 @@
         ps -ef | grep ssh-agent | grep -v grep
         echo Looking for ssh
         ps -ef | grep ssh | grep -v ssh-agent | grep -v grep
+        source /root/ssh-agent.env
         echo SSH_AGENT_PID=$SSH_AGENT_PID
         echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK
         ssh-add -l
