@@ -13,10 +13,9 @@
         ps -ef | grep ssh-agent | grep -v grep
         echo Looking for ssh
         ps -ef | grep ssh | grep -v ssh-agent | grep -v grep
-        ls -las /root/keys/runme.sh
         echo SSH_AGENT_PID=$SSH_AGENT_PID
         echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK
-        #/root/keys/runme.sh
+        ssh-add -l
 
 - hosts: all
   gather_facts: no
