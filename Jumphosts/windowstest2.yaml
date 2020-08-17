@@ -1,4 +1,4 @@
-- name: Role ensures that the socks tunnel is setup, the ssh keys may have a passphrase
+- name: Check what is running on the container
   hosts: localhost
   connection: local
   gather_facts: false
@@ -6,17 +6,24 @@
     - shell: |
         whoami
         curl ifconfig.me
+        echo ""
         pwd
         ps -ef
-        ls -las /root/keys
-        echo Looking for ssh-agent
-        ps -ef | grep ssh-agent | grep -v grep
-        echo Looking for ssh
-        ps -ef | grep ssh | grep -v ssh-agent | grep -v grep
+        #ls -las /root/keys
+        #echo Looking for ssh-agent
+        #ps -ef | grep ssh-agent | grep -v grep
+        #echo Looking for ssh
+        #ps -ef | grep ssh | grep -v ssh-agent | grep -v grep
         source /root/ssh-agent.env
         echo SSH_AGENT_PID=$SSH_AGENT_PID
         echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK
-        ssh-add -l
+        #ssh-add -l
+    - shell: |
+        source /root/ssh-agent.env
+        echo '{"SSH_AUTH_SOCK":"'$SSH_AUTH_SOCK'","SSH_AGENT_PID":"'$SSH_AGENT_PID'"}'
+      register: env_vars_stdout
+    - set_fact:
+        env_vars: "{{ env_vars_stdout.stdout }}"
 
 - hosts: all
   gather_facts: no
