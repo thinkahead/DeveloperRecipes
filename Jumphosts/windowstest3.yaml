@@ -17,17 +17,16 @@
         source /root/ssh-agent.env
         echo SSH_AGENT_PID=$SSH_AGENT_PID
         echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK
-        iptables-save
-        iptables -t nat -N sshuttle-12300
-        iptables -t nat -F sshuttle-12300
-        iptables -t nat -I OUTPUT 1 -j sshuttle-12300
-        iptables -t nat -I PREROUTING 1 -j sshuttle-12300
-        iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 10.224.0.0/22 -p tcp --to-ports 12300 -m ttl ! --ttl 42
-        iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 10.224.0.0/22 -p tcp --to-ports 12300
+        #iptables-save
+        #iptables -t nat -N sshuttle-12300
+        #iptables -t nat -F sshuttle-12300
+        #iptables -t nat -I OUTPUT 1 -j sshuttle-12300
+        #iptables -t nat -I PREROUTING 1 -j sshuttle-12300
+        #iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 10.224.0.0/22 -p tcp --to-ports 12300 -m ttl ! --ttl 42
+        #iptables -t nat -A sshuttle-12300 -j REDIRECT --dest 10.224.0.0/22 -p tcp --to-ports 12300
         iptables-save
 
         #sshuttle --dns -v -r ec2-user@ec2-52-201-237-93.compute-1.amazonaws.com 10.224.0.0/22 --ssh-cmd 'ssh -oPubkeyAuthentication=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no'&
-        sleep 10
         #ssh-add -l
     - shell: |
         source /root/ssh-agent.env > /dev/null
