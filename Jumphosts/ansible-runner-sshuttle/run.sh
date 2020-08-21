@@ -1,0 +1,2 @@
+docker run --privileged --rm -it registry.me:5000/default/oc_tower_cg:1.4.4 bash -c "/root/keys/runme.sh;curl ifconfig.me"
+#docker run --cap-add=NET_ADMIN --rm -v ${PWD}:/runner -v ${PWD}/keys:/root/keys -e RUNNER_PLAYBOOK=windowstest.yaml -it registry.me:5000/default/oc_tower_cg:1.4.4 bash -c "/root/keys/runme.sh;curl ifconfig.me;. /var/lib/awx/venv/ansible/bin/activate;ansible-runner run /runner"

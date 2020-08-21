@@ -1,0 +1,12 @@
+[windows]
+aakwin2016-1.yellowykt.com
+aakwin2012-1.yellowykt.com
+
+[windows:vars]
+ansible_connection=psrp
+ansible_psrp_protocol=http
+ansible_port=5985
+#ansible_psrp_proxy="socks5h://unixsocket/tmp/mysock.sock"
+#ansible_psrp_proxy="socks5h://127.0.0.1:1234"
+ansible_user=Administrator
+ansible_password=watson914
