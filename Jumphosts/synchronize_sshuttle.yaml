@@ -1,15 +1,15 @@
 ---
-- name: Use the synchronize module across multiple jumphosts
+- name: Use the synchronize module across multiple jumphosts using sshuttle
   hosts: all
   gather_facts: no
   tasks:
+    - name: Show hello `hostname` using the new ansible_ssh_common_args
+      shell: |
+        echo Hello `hostname`
     - name: Synchronization using rsync protocol (push)
       synchronize:
         src: roles/
         dest: /tmp/roles/
-        use_ssh_args: yes
-        dest_port: "{{ ansible_port }}"
+        use_ssh_args: no
+        dest_port: "{{ ansible_port if ansible_port is defined else 22 }}"
         delete: yes
-    - name: Show hello `hostname` using the new ansible_ssh_common_args
-      shell: |
-        echo Hello `hostname`
