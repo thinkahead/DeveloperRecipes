@@ -23,14 +23,14 @@
       no_log: true
 
     # Print as loop item
-    - name: Tower Response
-      set_fact:
-        dummy: value # Just to make some task without output
-      with_items:
-        - "{{ tower_response | to_json }}"
-        #- tower_response=>{{ tower_response | to_json }}<=
+    #- name: Tower Response
+    #  set_fact:
+    #    dummy: value # Just to make some task without output
+    #  with_items:
+    #    - "{{ tower_response | to_json }}"
+    #    #- tower_response=>{{ tower_response | to_json }}<=
  
-    - name: Set Custom Variable for test
+    - name: Custom Response
       set_stats:
         data:
-          status_message: "{{ tower_response | to_json }}" 
+          tower_response: "{{ tower_response | to_json }}" 
