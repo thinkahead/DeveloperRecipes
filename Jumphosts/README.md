@@ -11,13 +11,13 @@ Creating separate Credential Types for each hop in the path
    [Separate Credential Types Primary Path](SeparateCredentials.md)    
    [Separate Credential Types backup Path](SeparateCredentialsBackup.md)
 
-Multiple Jumphosts in Ansible Tower - Part 1: Connecting to Linux hosts using ssh with nested ProxyCommand https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-1
+Multiple Jumphosts in Ansible Tower – Part 1: Connecting to Linux hosts using ssh with nested ProxyCommand https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-1
 
-Multiple Jumphosts in Ansible Tower - Part 2: Connecting to Windows/Linux hosts with ssh tunnel SOCKS5 proxy https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-2
+Multiple Jumphosts in Ansible Tower – Part 2: Connecting to Windows/Linux hosts with ssh tunnel SOCKS5 proxy https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-2
 
-Multiple Jumphosts in Ansible Tower - Part 3: Ssh tunnel SOCKS5 proxy with passphrase enabled for ssh keys https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-3
+Multiple Jumphosts in Ansible Tower – Part 3: Ssh tunnel SOCKS5 proxy with passphrase enabled for ssh keys https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-3
 
-Multiple Jumphosts in Ansible Tower - Part 4: Multi jumphost connections to Linux hosts using ssh-add to add keys to ssh-agent https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-4/
+Multiple Jumphosts in Ansible Tower – Part 4: Multi jumphost connections to Linux hosts using ssh-add to add keys to ssh-agent https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-4/
 
 Multiple Jumphosts in Ansible Tower – Part 5: Unix domain socket file instead of socks port https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-5/
 
@@ -28,3 +28,7 @@ Multiple Jumphosts in Ansible Tower – Part 7: Failover using redundant jumphos
 Multiple Jumphosts in Ansible Tower – Part 8: Transferring files using ansible synchronize module and rsync https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-8/
 
 Multiple Jumphosts in Ansible Tower – Part 9: Pull secrets from remote 3rd-party vaults over multiple jumphost hops https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-9/
+
+Multiple Jumphosts in Ansible Tower – Part 10: Using Container Groups instead of bubblewrap for isolation of jobs https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-10/
+
+Multiple Jumphosts in Ansible Tower – Part 11: Using Container Groups with sshuttle proxy https://developer.ibm.com/recipes/tutorials/multiple-jumphosts-in-ansible-tower-part-11/
