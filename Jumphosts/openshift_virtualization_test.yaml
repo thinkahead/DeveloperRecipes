@@ -8,5 +8,5 @@
 - hosts: all
   gather_facts: no
   tasks:
-    - command: hostname
+    - raw: hostname
 
