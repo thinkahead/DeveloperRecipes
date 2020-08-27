@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - command: ping -c 5 172.30.100.136
+
