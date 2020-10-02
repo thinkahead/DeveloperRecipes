@@ -1,0 +1,131 @@
+---
+- name: Show the tower invocation parameters 1
+  debug:
+    msg: tower_host={{ tower_host }} tower_inventory={{ tower_inventory }} tower_credentials={{ tower_credentials }} tower_job_template={{ tower_job_template }}
+  when: tower_host is defined and tower_inventory is defined and tower_credentials is defined and tower_job_template is defined
+
+- name: Initialize credential_ids to empty
+  set_fact:
+    credential_ids: []
+- name: Invoke Tower api to retrieve credential ids
+  uri:
+    url: "{{ tower_api_url }}/api/v2/credentials/?name={{ item }}"
+    method: GET
+    body_format: json
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: tower_credentials_request
+  with_items: "{{ tower_credentials }}"
+  ignore_errors: true
+  no_log: true
+# - name: Debug credential_ids
+#   debug:
+#     msg: "{{ item.json.results[0].id }}"
+#   with_items: "{{ tower_credentials_request.results }}"
+#   loop_control:
+#     index_var: my_idx
+#     label: "{{ item.item }}"
+#   when: not tower_credentials_request.failed
+#   no_log: true
+- name: Set the credential_ids fact
+  set_fact:
+    credential_ids: "{{ credential_ids + [credential_item.json.results[0].id] }}"
+  with_items: "{{ tower_credentials_request.results }}"
+  loop_control:
+    index_var: my_idx
+    loop_var: credential_item
+    label: "{{ credential_item.item }}"
+  no_log: true
+  when: not tower_credentials_request.results[my_idx].failed and credential_item.json.results | length > 0
+# - name: Display the credential_ids
+#   debug:
+#     var: credential_ids
+
+- name: Invoke Tower api to retrieve inventory id
+  uri:
+    url: "{{ tower_api_url }}/api/v2/inventories/?name={{ tower_inventory }}"
+    method: GET
+    body_format: json
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: tower_inventory_request
+  ignore_errors: true
+  #no_log: true
+  when: tower_inventory|int == 0
+- debug:
+    msg: "{{ tower_inventory_request }}"
+- set_fact:
+    inventory_id: "{{ tower_inventory }}"
+  when: tower_inventory|int != 0
+# - name: Result from retrieving inventory id
+#   debug:
+#     msg: "{{ tower_inventory_request.json.results[0].id }}"
+#   when: not tower_inventory_request.failed
+- set_fact:
+    inventory_id: "{{ tower_inventory_request.json.results[0].id }}"
+  when:
+    - tower_inventory_request is defined
+    - tower_inventory_request.changed
+    - not tower_inventory_request.failed
+- name: Invoke Tower api to retrieve job template id
+  uri:
+    url: "{{ tower_api_url }}/api/v2/job_templates/?name={{ tower_job_template }}"
+    method: GET
+    body_format: json
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: tower_job_template_request
+  ignore_errors: true
+  no_log: true
+# - name: Result from retrieving job_template id
+#   debug:
+#     msg: "{{ tower_job_template_request.json.results[0].id }}"
+#   when: not tower_job_template_request.failed
+
+- block:
+  - set_fact:
+      tags_to_pass: "{{ tower_tags | join(',') if tower_tags is defined else '' }}"
+      tower_extra_vars: ""
+  - name: Invoke Tower api to launch job template
+    uri:
+      url: "{{ tower_api_url }}/api/v2/job_templates/{{ tower_job_template_request.json.results[0].id }}/launch/"
+      method: POST
+      body_format: json
+      body:
+        #inventory: "{{ tower_inventory_request.json.results[0].id }}"
+        inventory: "{{ inventory_id }}"
+        credentials: "{{ credential_ids }}"
+        limit: "{{ tower_host if tower_host is string else (tower_host | join(' ')) }}"
+        extra_vars: "{{ tower_extra_vars | to_json }}"
+        job_tags: "{{ tags_to_pass if ((tags_to_pass | length)<1024) else '' }}"
+      validate_certs: no
+      status_code: 201, 200
+      headers:
+        Content-Type: application/json
+        Authorization: "Bearer {{ tower_api_token }}"
+    register: job_request
+    no_log: true
+    ignore_errors: true
+  - name: Show error Invoke Tower api to launch job template
+    debug:
+      msg: "{{ job_request }}"
+    when: job_request.failed or (job_request.status!=201 and job_request.status!=200)
+  when:
+    - inventory_id is defined
+    - not tower_job_template_request.failed
+
+- set_fact:
+    job_request_locations: "{{ (job_request_locations | default([])) + [ {'tower_host':tower_host,'location':job_request['location']} ] }}"
+  when:
+    - not tower_job_template_request.failed
+    - inventory_id is defined
+    - not job_request.failed

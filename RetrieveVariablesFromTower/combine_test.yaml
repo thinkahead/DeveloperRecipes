@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    tower_api_url: "https://ansible-tower-web-svc-tower.example.com"
+    tower_api_token: "tower_api_token"
+    #policy_tags_dict: {"OS": "rhel7", "env": "dev2"}
+    policy_tags_dict: {"OS": "rhel7", "env": "prod2"}
+    policy_tags_list: ["linux"]
+  tasks:
+    - name: Get VMs from Ansible Tower
+      include: tower_get_vms2.yaml
+
+    - name: Debug Number of VMs
+      debug:
+        msg: "Number of VMs: {{ all_vms | length }}"
+      when: all_vms is defined
+
+    # Submit job to Ansible Tower for Virtual Machine Groups
+    - block:
+        - name: Job Template Name to invoke
+          set_fact:
+            tower_job_template: Test_External_Invocation
+
+        - name: Initialize job_request_locations to empty list for Virtual Machine Groups
+          set_fact:
+            job_request_locations: "{{ [] }}"
+
+        - name: Group VMs by credentials and inventory for Virtual Machine Groups in all_vms.spec
+          group_dict:
+            items: "{{ all_vms }}"
+            keys: "{{ ['tower_credentials', 'tower_inventory'] }}"
+            subfield: "spec"
+          register: all_vm_groups
+
+        - name: Invoke job for VirtualMachine Groups
+          include: tower_invoke.yaml tower_host="{{ vm_group_item.tower_host }}" tower_inventory="{{ vm_group_item.tower_inventory }}" tower_credentials="{{ vm_group_item.tower_credentials }}"
+          with_items: "{{ all_vm_groups.grouped_items }}"
+          loop_control:
+            loop_var: vm_group_item
+
+        - name: Returned from invoke job template for Virtual Machine Groups
+          debug:
+            msg: "{{ job_request_locations }}"
+
+        - name: Check that tower job has finished for Virtual Machine Groups
+          uri:
+            url: "{{ job_request_location.location }}"
+            method: GET
+            validate_certs: no
+            status_code: 201, 200
+            headers:
+              Content-Type: application/json
+              Authorization: "Bearer {{ tower_api_token }}"
+          register: job_result_list
+          until: "(job_result_list['status']!=201 and job_result_list['status']!=200) or 'canceled' in job_result_list['json']['status'] or 'successful' in job_result_list['json']['status'] or 'failed' in job_result_list['json']['status']"
+          retries: 120
+          delay: 30
+          #no_log: true
+          ignore_errors: true
+          with_items: "{{ job_request_locations }}"
+          loop_control:
+            loop_var: job_request_location
+      when: all_vms is defined and (all_vms|length)>0

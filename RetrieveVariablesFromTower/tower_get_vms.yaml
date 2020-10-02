@@ -1,0 +1,146 @@
+---
+- block:
+  - debug:
+      msg: "{{ policy_tags_dict }}"
+  - set_fact:
+      policy_tags_list: "{{ (policy_tags_dict | to_json | regex_replace(': ',':') | regex_replace('[\\{}\"]','')).split(', ') }}"
+    when: "(policy_tags_dict|length) > 0"
+  - debug:
+      msg: "Policy tags: {{ policy_tags_list | list }} {{ policy_tags_list | list | length }}"
+    when: policy_tags_list is defined
+  when: policy_tags_dict is defined
+- set_fact:
+    # Limit by Inventory and Tags
+    # url_to_invoke: "{{ tower_api_url }}/api/v2/hosts/?inventory__name__iexact=yellowzone&chain__groups__name__iexact={{ policy_tags_list | list | join('&chain__groups__name__iexact=') }}&chain__not__groups__name__iexact=blacklist"
+    # Limit by Tags
+    # url_to_invoke: "{{ tower_api_url }}/api/v2/hosts/?groups__name__iexact={{ policy_tags_list | list | join('&chain__groups__name__iexact=') }}"
+    # Limit by tags and Blacklist
+    url_to_invoke: "{{ (tower_api_url+'/api/v2/hosts/?groups__name__iexact='+(policy_tags_list | list | join('&chain__groups__name__iexact='))+'&chain__not__groups__name__iexact=blacklist') if (policy_tags_list is defined and (policy_tags_list|list|length) > 0) else (tower_api_url+'/api/v2/hosts/') }}"
+- debug:
+    msg: "{{ url_to_invoke }}"
+
+- name: Send request to tower to retrieve VMs with required tags (groups)
+  uri:
+    url: "{{ url_to_invoke }}"
+    method: GET
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: query_result
+  ignore_errors: true
+  no_log: true
+
+- name: Show error in Send request to tower to retrieve VMs with required tags (groups)
+  fail:
+    msg: "{{ query_result }}"
+  when: query_result.status!=201 and query_result.status!=200
+
+- name: Initialize facts
+  set_fact:
+    vm_list: "{{ [] }}"
+    group_ids: "{{ [] }}"
+    inventory_ids: "{{ [] }}"
+
+- name: Collect used inventory ids and group ids
+  set_fact:
+    inventory_ids: "{{ inventory_ids | union([vm_item.inventory]) }}"
+    group_ids: "{{ group_ids | union(vm_item.summary_fields.groups.results | json_query(jmesquery)) }}"
+  loop: "{{ query_result.json.results | list }}"
+  loop_control:
+    loop_var: vm_item
+    label: "{{ vm_item['name'] }}"
+  no_log: true
+  vars:
+    jmesquery: "[*].id"
+  when: query_result is defined
+- name: Show the Inventory ids
+  debug:
+    msg: "{{ inventory_ids|join(' ') }}"
+- name: Show the Group ids
+  debug:
+    msg: "{{ group_ids|join(' ') }}"
+
+- name: Send request to tower to retrieve Group variables
+  uri:
+    url: "{{ tower_api_url }}/api/v2/groups/{{ group_id }}/"
+    method: GET
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: groups_result
+  ignore_errors: true
+  loop: "{{ group_ids | unique }}"
+  no_log: true
+  loop_control:
+    loop_var: group_id
+    label: "{{ group_id }}"
+- set_fact:
+    groups_list: "{{ {} }}"
+- name: Collect required info for Groups
+  set_fact:
+    groups_list: "{{ groups_list | combine({group_item.group_id:(group_item.json.variables | from_yaml) or {} }) }}"
+  loop: "{{ groups_result.results }}"
+  no_log: true
+  loop_control:
+    loop_var: group_item
+    label: "{{ group_item['json']['name'] }}"
+    # label: "{{ group_item['group_id'] }}"
+  when: groups_result is defined
+- name: Groups list
+  debug:
+    msg: "{{ groups_list }}"
+
+- name: Send request to tower to retrieve Inventory variables
+  uri:
+    url: "{{ tower_api_url }}/api/v2/inventories/{{ inventory_id }}/"
+    method: GET
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: inventories_result
+  ignore_errors: true
+  loop: "{{ inventory_ids | unique }}"
+  no_log: true
+  loop_control:
+    loop_var: inventory_id
+    label: "{{ inventory_id }}"
+- set_fact:
+    inventories_list: "{{ {} }}"
+- name: Collect required info for Inventories
+  set_fact:
+    inventories_list: "{{ inventories_list | combine({inventory_item.inventory_id:(inventory_item.json.variables | from_yaml)}) }}"
+  loop: "{{ inventories_result.results }}"
+  no_log: true
+  loop_control:
+    loop_var: inventory_item
+    label: "{{ inventory_item['inventory_id'] }}"
+  when: inventories_result is defined
+- name: Inventories list
+  debug:
+    msg: "{{ inventories_list }}"
+
+- name: Collect required info for VMs
+  set_fact:
+    vm_list: "{{ vm_list + [{'metadata':{'name':item.summary_fields.inventory.name+'_'+item.name.split('.')|join('_'),'tags':(dict((item.summary_fields.groups.results | json_query(jmesquery_name))|map('regex_replace','(.*):.*','\\1') | zip((item.summary_fields.groups.results | json_query(jmesquery_name))|map('regex_replace','.*:(.*)','\\1'))))},'spec':{'tower_host':item.name, 'tower_inventory':item.summary_fields.inventory.name, 'tower_credentials':( ( [(item.variables | from_yaml).jumphost_credential] if (item.variables | from_yaml).jumphost_credential is defined else (((item.summary_fields.groups.results | json_query(jmesquery_id)) | map('extract', groups_list, 'jumphost_credential') | select('defined') | list | unique) if (((item.summary_fields.groups.results | json_query(jmesquery_id)) | map('extract', groups_list, 'jumphost_credential') | select('defined') | list | unique)|length==1) else ([inventories_list[item.inventory]['jumphost_credential']] if inventories_list[item.inventory]['jumphost_credential'] is defined else []))) + ( ([(item.variables | from_yaml).os_credential] if (item.variables | from_yaml).os_credential is defined else (((item.summary_fields.groups.results | json_query(jmesquery_id)) | map('extract', groups_list, 'os_credential') | select('defined') | list | unique) if (((item.summary_fields.groups.results | json_query(jmesquery_id)) | map('extract', groups_list, 'os_credential') | select('defined') | list | unique)|length==1) else ([inventories_list[item.inventory]['os_credential']] if inventories_list[item.inventory]['os_credential'] is defined else []))))) }}] }}"
+  loop: "{{ query_result.json.results | list }}"
+  loop_control:
+    label: "{{ item['name'] }}"
+  vars:
+    jmesquery_id: "[*].id"
+    jmesquery_name: "[*].name"
+  no_log: true
+  when: query_result is defined
+
+- set_fact:
+    all_vms: "{{ vm_list }}"
+  no_log: true
+
+- name: Show the VMs
+  debug:
+    msg: "{{ all_vms }}"

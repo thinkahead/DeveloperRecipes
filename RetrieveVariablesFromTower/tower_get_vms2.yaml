@@ -1,0 +1,103 @@
+---
+- block:
+  - debug:
+      msg: "{{ policy_tags_dict }}"
+  - set_fact:
+      policy_tags_list: "{{ ((policy_tags_dict | to_json | regex_replace(': ',':') | regex_replace('[\\{}\"]','')).split(', ') + (policy_tags_list if policy_tags_list is defined else [])) | unique }}"
+    when: "(policy_tags_dict|length) > 0"
+  when: policy_tags_dict is defined
+- debug:
+    msg: "Policy tags: {{ policy_tags_list | list }} {{ policy_tags_list | list | length }}"
+  when: policy_tags_list is defined
+- set_fact:
+    # Limit by tags and Blacklist
+    url_to_invoke: "{{ (tower_api_url+'/api/v2/hosts/?groups__name__iexact='+(policy_tags_list | list | join('&chain__groups__name__iexact='))+'&chain__not__groups__name__iexact=blacklist') if (policy_tags_list is defined and (policy_tags_list|list|length) > 0) else (tower_api_url+'/api/v2/hosts/') }}"
+- debug:
+    msg: "{{ url_to_invoke }}"
+
+- name: Send request to tower to retrieve VMs with required tags (groups)
+  uri:
+    url: "{{ url_to_invoke }}"
+    method: GET
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: query_result
+  ignore_errors: true
+  #no_log: true
+
+- name: Show error in Send request to tower to retrieve VMs with required tags (groups)
+  fail:
+    msg: "{{ query_result }}"
+  when: query_result.status!=201 and query_result.status!=200
+
+- name: Show query_result
+  debug:
+    msg: "{{ query_result }}"
+
+- name: Initialize inventory_ids_hosts fact
+  set_fact:
+    inventory_ids_hosts: {}
+- name: Collect used inventory ids and host names
+  set_fact:
+    inventory_ids_hosts: "{{ inventory_ids_hosts | combine({vm_item.inventory:inventory_ids_hosts[vm_item.inventory]|default([])+[vm_item['name']]}) }}"
+  loop: "{{ query_result.json.results | list }}"
+  loop_control:
+    loop_var: vm_item
+    label: "{{ vm_item['name'] }}"
+  no_log: true
+  when: query_result is defined
+- name: Show the Inventory ids and host names
+  debug:
+    msg: "{{ inventory_ids_hosts }}"
+
+- name: Send request to tower to retrieve Inventory
+  uri:
+    url: "{{ tower_api_url }}/api/v2/inventories/{{ item.key }}/script/?hostvars=1"
+    method: GET
+    validate_certs: no
+    status_code: 201, 200
+    headers:
+      Content-Type: application/json
+      Authorization: "Bearer {{ tower_api_token }}"
+  register: inventories_result
+  ignore_errors: true
+  with_dict: "{{ inventory_ids_hosts }}"
+  no_log: true
+- name: Inventories
+  debug:
+    msg: "{{ inventories_result }}"
+
+- name: Send request to module to retrieve variables
+  flatten_variables:
+    inventory: "{{ inventory_result.json }}"
+    hosts: "{{ inventory_result.item.value }}"
+    inventory_id: "{{ inventory_result.item.key }}"
+    #hosts: "{{ inventory_ids_hosts[inventory_result.inventory_id] }}"
+  register: flattened
+  ignore_errors: true
+  loop: "{{ inventories_result.results }}"
+  no_log: true
+  loop_control:
+    loop_var: inventory_result
+    label: "{{ inventory_result.item.key }}"
+
+- name: Initialize all_vms
+  set_fact:
+    all_vms: "{{ [] }}"
+- name: Flattened variables for hosts
+  set_fact:
+    all_vms: "{{ all_vms + flattened_result.result }}"
+  loop: "{{ flattened.results }}"
+  loop_control:
+    loop_var: flattened_result
+  no_log: true
+
+- name: Output of Flattened variables for hosts
+  debug:
+    msg: "{{ all_vms }}"
+
+  #- fail:
+  #  msg: Debug
