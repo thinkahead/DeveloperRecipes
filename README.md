@@ -20,11 +20,11 @@ All playbooks and sources referred to in the following Developer Recipes at http
 10. [Using Container Groups instead of bubblewrap for isolation of jobs](https://github.com/IBM/IBMDeveloper-recipes/blob/main/multiple-jumphosts-in-ansible-tower-part-10/index.md)
 11. [Using Container Groups with sshuttle proxy](https://github.com/IBM/IBMDeveloper-recipes/blob/main/multiple-jumphosts-in-ansible-tower-part-11/index.md)
 
-**OpenFaaS on RHOCP 4.x**
-- [Deploying OpenFaaS on Red Hat OpenShift Container Platform for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-1)
-- [OpenFaaS Function Custom Resource with HPA on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-2)
-- [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
-- [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
+**OpenFaaS on RHOCP 4.x** (4 parts)
+1. [Deploying OpenFaaS on Red Hat OpenShift Container Platform for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-1)
+2. [OpenFaaS Function Custom Resource with HPA on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-2)
+3. [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
+4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
 
 **Thoughts on Cloud** https://www.ibm.com/blogs/cloud-computing/author/akarve/
 
