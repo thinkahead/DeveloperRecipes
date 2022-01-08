@@ -34,6 +34,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 5. [Raspberry Pi 4 with CentOS 8 Linux Stream](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/12/04/microshift-5)
 6. [MicroShift on Raspberry Pi 4 with Ubuntu 20.04](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/12/18/microshift-6)
 7. [MicroShift on Jetson Nano with Ubuntu 20.04](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/12/18/microshift-7)
+8. [MicroShift on Raspberry Pi 4 with balenaOS](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2022/01/03/microshift-8)
 
 
 **Thoughts on Cloud** https://www.ibm.com/blogs/cloud-computing/author/akarve/
