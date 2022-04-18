@@ -21,20 +21,25 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 11. [Using Container Groups with sshuttle proxy](https://github.com/IBM/IBMDeveloper-recipes/blob/main/multiple-jumphosts-in-ansible-tower-part-11/index.md)
 
 **OpenFaaS on RHOCP 4.x** (4 parts) 2021
-1. [Deploying OpenFaaS on Red Hat OpenShift Container Platform for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-1)
-2. [OpenFaaS Function Custom Resource with HPA on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-2)
-3. [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
-4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
+1. [Deploying OpenFaaS on Red Hat OpenShift Container Platform for IBM Power ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-1)
+2. [OpenFaaS Function Custom Resource with HPA on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/07/06/openfaas-on-rhocp-2)
+3. [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
+4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
 
-**Computing at the Edge for Constrained Devices with MicroShift** (7 parts) 2021
-1. [Working with MicroShift on MacBook Pro](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/11/23/microshift-1)
-2. [Setting up the Jetson Nano and MicroShift Dependencies](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/11/23/microshift-2)
-3. [Building and Running MicroShift on a Jetson Nano](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/11/23/microshift-3)
-4. [Raspberry Pi 4 with Raspberry Pi OS (64 bit)](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/11/28/microshift-4)
-5. [Raspberry Pi 4 with CentOS 8 Linux Stream](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/12/04/microshift-5)
-6. [MicroShift on Raspberry Pi 4 with Ubuntu 20.04](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/12/18/microshift-6)
-7. [MicroShift on Jetson Nano with Ubuntu 20.04](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2021/12/18/microshift-7)
-8. [MicroShift on Raspberry Pi 4 with balenaOS](https://community.ibm.com/community/user/publiccloud/blogs/alexei-karve/2022/01/03/microshift-8)
+**Computing at the Edge for Constrained Devices with MicroShift** (13 parts) 2021-22
+1. [Working with MicroShift on MacBook Pro](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-1)
+2. [Setting up the Jetson Nano and MicroShift Dependencies](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-2)
+3. [Building and Running MicroShift on a Jetson Nano](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-3)
+4. [Raspberry Pi 4 with Raspberry Pi OS (64 bit)](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/28/microshift-4)
+5. [Raspberry Pi 4 with CentOS 8 Linux Stream](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/12/04/microshift-5)
+6. [MicroShift on Raspberry Pi 4 with Ubuntu 20.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/12/18/microshift-6)
+7. [MicroShift on Jetson Nano with Ubuntu 20.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/12/18/microshift-7)
+8. [MicroShift on Raspberry Pi 4 with balenaOS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/01/03/microshift-8)
+9. [Virtualization with MicroShift on Raspberry Pi 4 with Raspberry Pi OS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/03/02/microshift-9)
+10. [MicroShift on Raspberry Pi 4 with Fedora IoT](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/03/07/microshift-10)
+11. [MicroShift on Raspberry Pi 4 with Fedora 35 Server](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/03/07/microshift-11)
+12. [MicroShift on Raspberry Pi 4 with Fedora 35 CoreOS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-12)
+13. [MicroShift on Raspberry Pi 4 with Rocky Linux](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-13)
 
 
 **Thoughts on Cloud** https://www.ibm.com/blogs/cloud-computing/author/akarve/
