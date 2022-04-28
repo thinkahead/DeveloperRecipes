@@ -26,7 +26,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 3. [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
 4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
 
-**Computing at the Edge for Constrained Devices with MicroShift** (13 parts) 2021-22
+**Computing at the Edge for Constrained Devices with MicroShift** (14 parts) 2021-22
 1. [Working with MicroShift on MacBook Pro](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-1)
 2. [Setting up the Jetson Nano and MicroShift Dependencies](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-2)
 3. [Building and Running MicroShift on a Jetson Nano](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-3)
@@ -39,7 +39,8 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 10. [MicroShift on Raspberry Pi 4 with Fedora IoT](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/03/07/microshift-10)
 11. [MicroShift on Raspberry Pi 4 with Fedora 35 Server](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/03/07/microshift-11)
 12. [MicroShift on Raspberry Pi 4 with Fedora 35 CoreOS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-12)
-13. [MicroShift on Raspberry Pi 4 with Rocky Linux](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-13)
+13. [MicroShift on Raspberry Pi 4 with Ubuntu Server 22.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-13)
+14. [MicroShift on Raspberry Pi 4 with Rocky Linux 8.5](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/24/microshift-14)
 
 
 **Thoughts on Cloud** https://www.ibm.com/blogs/cloud-computing/author/akarve/
