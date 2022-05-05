@@ -41,7 +41,9 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 12. [MicroShift on Raspberry Pi 4 with Fedora 35 CoreOS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-12)
 13. [MicroShift on Raspberry Pi 4 with Ubuntu Server 22.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-13)
 14. [MicroShift on Raspberry Pi 4 with Rocky Linux 8.5](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/24/microshift-14)
+15. MicroShift on openSUSE (Forthcoming)
 
+**Linkedin Articles** https://www.linkedin.com/in/alexei-karve-82bb9814/recent-activity/posts/
 
 **Thoughts on Cloud** https://www.ibm.com/blogs/cloud-computing/author/akarve/
 
