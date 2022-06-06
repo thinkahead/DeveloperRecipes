@@ -27,7 +27,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
 
 **Computing at the Edge for Constrained Devices with MicroShift** (15 parts) 2021-22
-1. [Working with MicroShift on MacBook Pro](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-1)
+1. [Working with MicroShift on MacBook Pro with VirtualBox and Multipass](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-1)
 2. [Setting up the Jetson Nano and MicroShift Dependencies](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-2)
 3. [Building and Running MicroShift on a Jetson Nano](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-3)
 4. [MicroShift on Raspberry Pi 4 with Raspberry Pi OS (64 bit)](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/28/microshift-4)
@@ -42,7 +42,11 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 13. [MicroShift and KubeVirt on Raspberry Pi 4 with Ubuntu Server 22.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/17/microshift-13)
 14. [MicroShift and KubeVirt on Raspberry Pi 4 with Rocky Linux 8.5](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/04/24/microshift-14)
 15. [MicroShift and KubeVirt on Raspberry Pi 4 with openSUSE](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/08/microshift-15)
-
+16. [MicroShift and KubeVirt on Raspberry Pi 4 with Oracle Linux 8.5](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/13/microshift-16)
+17. [MicroShift and KubeVirt on Raspberry Pi 4 with AlmaLinux 8.5](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/17/microshift-17)
+18. [MicroShift and KubeVirt on Raspberry Pi 4 with Manjaro 22.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/26/microshift-18)
+19. [MicroShift and KubeVirt on Raspberry Pi 4 with Kali Linux](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/30/microshift-19)
+20. [MicroShift and KubeVirt on Raspberry Pi 4 with Arch Linux](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/30/microshift-20)
 
 **Linkedin Articles** https://www.linkedin.com/in/alexei-karve-82bb9814/recent-activity/posts/
 
