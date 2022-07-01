@@ -47,6 +47,8 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 18. [MicroShift and KubeVirt on Raspberry Pi 4 with Manjaro 22.04](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/26/microshift-18)
 19. [MicroShift and KubeVirt on Raspberry Pi 4 with Kali Linux](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/30/microshift-19)
 20. [MicroShift and KubeVirt on Raspberry Pi 4 with Arch Linux](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/05/30/microshift-20)
+21. [MicroShift and KubeVirt on Raspberry Pi 4 with Fedora 36 Silverblue](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/06/20/microshift-21)
+22. [MicroShift and KubeVirt on Raspberry Pi 4 with EndeavourOS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/06/27/microshift-22)
 
 **Linkedin Articles** https://www.linkedin.com/in/alexei-karve-82bb9814/recent-activity/posts/
 
