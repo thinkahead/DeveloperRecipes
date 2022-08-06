@@ -50,6 +50,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 21. [MicroShift and KubeVirt on Raspberry Pi 4 with Fedora 36 Silverblue](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/06/20/microshift-21)
 22. [MicroShift and KubeVirt on Raspberry Pi 4 with EndeavourOS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/06/27/microshift-22)
 23. [MicroShift and Kata Containers on Raspberry Pi 4 with multiple editions of Fedora 36](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/07/26/microshift-23)
+24. [Build and Install the Kata Containers Runtime with MicroShift on Raspberry Pi 4 with Manjaro](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/08/05/microshift-24)
 
 **Linkedin Articles** https://www.linkedin.com/in/alexei-karve-82bb9814/recent-activity/posts/
 
