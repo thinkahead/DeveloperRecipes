@@ -26,7 +26,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 3. [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
 4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
 
-**Computing at the Edge for Constrained Devices with MicroShift** (25 parts) 2021-22
+**Computing at the Edge for Constrained Devices with MicroShift** (25 parts) 2021-22 https://community.ibm.com/community/user/cloud/network/members/profile/contributions/contributions-list?UserKey=8d22d660-fd1d-4e33-83cc-da0fa588de43
 1. [Working with MicroShift on MacBook Pro with VirtualBox and Multipass](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-1)
 2. [Setting up the Jetson Nano and MicroShift Dependencies](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-2)
 3. [Building and Running MicroShift on a Jetson Nano](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-3)
