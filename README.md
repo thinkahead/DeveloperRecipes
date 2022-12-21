@@ -26,7 +26,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 3. [OpenFaaS Asynchronous Functions and Function Chaining on OpenShift for IBM Power ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/07/12/openfaas-on-rhocp-3)
 4. [OpenFaaS Functions for MAX Models on OpenShift ppc64le](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/08/09/openfaas-on-rhocp-4)
 
-**Computing at the Edge for Constrained Devices with MicroShift** (25 parts) 2021-22 https://community.ibm.com/community/user/cloud/network/members/profile/contributions/contributions-list?UserKey=8d22d660-fd1d-4e33-83cc-da0fa588de43
+**Computing at the Edge for Constrained Devices with MicroShift** (29 parts) 2021-22 https://community.ibm.com/community/user/cloud/network/members/profile/contributions/contributions-list?UserKey=8d22d660-fd1d-4e33-83cc-da0fa588de43
 1. [Working with MicroShift on MacBook Pro with VirtualBox and Multipass](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-1)
 2. [Setting up the Jetson Nano and MicroShift Dependencies](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-2)
 3. [Building and Running MicroShift on a Jetson Nano](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2021/11/23/microshift-3)
@@ -52,6 +52,10 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 23. [MicroShift and Kata Containers on Raspberry Pi 4 with multiple editions of Fedora 36](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/07/26/microshift-23)
 24. [Build and Install the Kata Containers Runtime with MicroShift on Raspberry Pi 4 with Manjaro](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/08/05/microshift-24)
 25. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with Pop!_OS](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/08/27/microshift-25)
+26. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with Alma Linux 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/11/27/microshift-26)
+27. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with Oracle Linux 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/11/27/microshift-27)
+28. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with Rocky Linux 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/12/13/microshift-28)
+29. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with CentOS Stream 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/12/13/microshift-29)
 
 **Linkedin Articles** https://www.linkedin.com/in/alexei-karve-82bb9814/recent-activity/posts/
 
