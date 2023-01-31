@@ -56,7 +56,7 @@ All playbooks and sources referred to in the following Ansible Tower Developer R
 27. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with Oracle Linux 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/11/27/microshift-27)
 28. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with Rocky Linux 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/12/13/microshift-28)
 29. [MicroShift with KubeVirt and Kata Containers on Raspberry Pi 4 with CentOS Stream 9](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2022/12/13/microshift-29)
-
+30. [MicroShift on Raspberry Pi 4 with Linux Distribution built using Yocto](https://community.ibm.com/community/user/cloud/blogs/alexei-karve/2023/01/30/microshift-30)
 **Linkedin Articles** https://www.linkedin.com/in/alexei-karve-82bb9814/recent-activity/posts/
 
 **Thoughts on Cloud** https://www.ibm.com/blogs/cloud-computing/author/akarve/
